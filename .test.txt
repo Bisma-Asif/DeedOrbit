@@ -1,0 +1,377 @@
+
+> deedorbit-app@1.0.0 test:api C:\Users\DELL\Downloads\Innovista-Estate
+> node --test server/*.test.ts
+
+(node:13428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ every business table carries a tenant_id column (26.1381ms)
+✔ permissions live in the database, not in code (0.4256ms)
+✔ all eleven roles are seeded (0.5004ms)
+✔ every seeded role can reach the dashboard the app lands on after sign-in (1.4171ms)
+✔ unauthenticated requests are rejected (83.2539ms)
+✔ a wrong password is refused without revealing which half was wrong (82.0962ms)
+✔ a valid session returns the user, tenant, role, and viewable modules (95.3045ms)
+✔ a signed-out session call still reports twofaRequired, so the client can discriminate (3.2745ms)
+✔ a pending two-factor session reads as pending, not as signed out (660.6455ms)
+✔ the session payload carries a complete boolean permission map (77.3304ms)
+✔ a sales agent session grants a map with no user administration (63.4796ms)
+✔ the members and roles admin surface is closed to a member without users.view (75.4306ms)
+✔ a member with users.view can still read the roles matrix (91.4916ms)
+✔ a sales agent cannot see the users module in their grants (65.2717ms)
+✔ the session cookie is http-only (66.8044ms)
+✔ a role without the grant is refused with 403 (71.253ms)
+✔ a refused attempt is written to the audit log (138.5544ms)
+✔ the role matrix reflects the seeded defaults (92.1298ms)
+✔ revoking a permission in the database changes the API response (94.0966ms)
+✔ an admin can widen a role below their own (81.8947ms)
+✔ an admin cannot edit their own role into more access (75.6813ms)
+✔ an admin cannot edit a role above their own (69.0192ms)
+✔ platform roles are not editable from a tenant (65.6ms)
+✔ a user outside the tenant is invisible, not merely forbidden (139.4761ms)
+✔ signup issues a session scoped to the new workspace (154.3669ms)
+✔ a client cannot post another tenant id and have it accepted (70.9519ms)
+✔ a tenant admin can invite, and the invite lands as a pending user (78.1645ms)
+✔ an invited user cannot sign in until the invitation is accepted (2.2994ms)
+✔ an admin can change a role and it takes effect immediately (86.1478ms)
+✔ deactivating a user kills their live sessions immediately (165.6125ms)
+✔ an admin cannot suspend themselves (70.8221ms)
+✔ an admin cannot assign a role above their own (65.4821ms)
+✔ platform-scope roles are not offered for assignment (75.9364ms)
+✔ forgot-password answers identically for known and unknown addresses (7.0718ms)
+✔ a reset token can set a new password and invalidates sessions (232.5816ms)
+✔ two-factor can be enrolled, challenged on login, and accepted (702.4177ms)
+✔ logging out revokes the session (67.0904ms)
+✔ a suspended workspace cannot be signed into (110.4318ms)
+✔ unknown endpoints and methods are refused (2.9462ms)
+✔ a malformed body is rejected rather than crashing (1.842ms)
+✔ organization settings are readable and seeded (67.5213ms)
+✔ a role without settings.view cannot read organization settings (68.6138ms)
+✔ a view-only role reads with canEdit false and is refused every write (98.4176ms)
+✔ a partial profile update leaves untouched fields alone (87.1515ms)
+✔ an empty update is refused without touching the row (69.0226ms)
+✔ invalid profile fields are reported per field and nothing is written (63.1278ms)
+✔ a cleared optional field is written as null rather than ignored (73.9034ms)
+✔ branches are listed with the seeded headquarters first (59.5391ms)
+✔ a branch can be created, promoted, and made to conflict (105.0942ms)
+✔ headquarters cannot be demoted and the last office cannot be archived (100.9974ms)
+✔ a rejected branch update leaves the row untouched (77.8629ms)
+✔ numbering formats are readable and preview the next number (60.0688ms)
+✔ numbering can be saved and rejects a bad prefix (94.8777ms)
+✔ numbering requires every document type exactly once (65.1691ms)
+✔ issued document numbers increment and never repeat (179.724ms)
+✔ a yearly reset restarts at 1 exactly once (95.2757ms)
+✔ the logo rejects a non-image and a lying content type (64.6078ms)
+✔ the logo round-trips and can be removed (80.1378ms)
+✔ organization settings are scoped to the caller's own workspace (186.4669ms)
+✔ a branch id from another workspace is not found (193.9285ms)
+✔ organization defaults are re-applied and stay idempotent (76.7151ms)
+✔ the permission catalogue reaches an already-installed workspace (596.4938ms)
+✔ the organization migration is re-runnable (0.9915ms)
+✔ the member list ships the office catalogue so the filter needs no second grant (77.2636ms)
+✔ a member can be restricted to specific offices (73.4285ms)
+✔ clearing an office restriction restores every office (70.6971ms)
+✔ duplicate and blank office ids are collapsed rather than stored twice (81.5089ms)
+✔ an office from another workspace cannot be granted (197.724ms)
+✔ a malformed office grant is refused without changing the row (92.3629ms)
+✔ office scope, forced reset, and activity need the matching users grant (74.8144ms)
+✔ forcing a reset signs the member out and blocks sign-in until one is set (416.5135ms)
+✔ a reset cannot be forced on a member who has never signed in (84.4333ms)
+✔ the activity timeline reports sign-in attempts and the actions taken (67.792ms)
+✔ failed sign-ins are recorded, counted on the row, and never leak across workspaces (231.3939ms)
+✔ a refused sign-in is recorded once, under its own outcome (96.6397ms)
+✔ sign-in history survives a repeat login and records the device (199.8827ms)
+✔ deactivating a member clears their office scope and reset flag (108.0794ms)
+✔ the user access control migration is re-runnable (0.6075ms)
+✔ organization responses match the client contract exactly (76.0893ms)
+✔ the numbering save returns the same shape as the read (73.7116ms)
+✔ member responses match the client contract exactly (64.0483ms)
+✔ the member write routes return the same member shape as the read (75.6907ms)
+✔ a project records the developer, location, status, and launch date (74.9255ms)
+✔ a project with nothing optional is stored without inventing values (62.6704ms)
+✔ the four figures on the list are derived, not stored (136.7888ms)
+✔ a project name and reference are unique per workspace (214.246ms)
+✔ a rejected project write leaves the stored record untouched (119.4112ms)
+✔ clearing an optional project field is a deliberate act (92.8066ms)
+✔ project reads and writes need the matching grant (154.0214ms)
+✔ a project from another workspace is neither listed nor readable (197.9569ms)
+✔ the projects migration is re-runnable (1.3184ms)
+✔ a project on sale cannot be dated before the launch already recorded (113.5215ms)
+✔ a structure node records its kind, parent, and position (102.3983ms)
+✔ nesting stops at the depth cap and says so (122.1122ms)
+✔ a duplicate sibling name is refused, case-insensitively (85.0179ms)
+✔ renaming touches one node and leaves its kind alone when unsent (104.3871ms)
+✔ only an empty node can be deleted (115.2411ms)
+✔ reordering swaps with the sibling above and stops at the ends (147.4915ms)
+✔ reading structure needs projects.view and writing needs projects.edit (233.3329ms)
+✔ another workspace's node is not found, not merely forbidden (215.0287ms)
+✔ deleting a project takes its structure with it (87.9561ms)
+✔ the project structure migration is re-runnable (0.9685ms)
+✖ a unit records its type, its place in the structure, and its price (90.0929ms)
+✔ every unit type is accepted, and nothing outside the five is (129.4934ms)
+✔ a unit cannot be listed without somewhere to sit (79.3012ms)
+✔ size and price are whole numbers, and an empty price is not zero (119.2295ms)
+✔ custom attributes are stored alphabetically, and refused when they clash (114.7943ms)
+✔ a unit code is unique per project, case-insensitively (172.947ms)
+✖ a unit list states its totals and the currency they are in (125.0543ms)
+✔ attributes are replaced whole, which is what makes a removal possible (113.7741ms)
+✔ a unit can be moved within its project, but not out of it (125.7227ms)
+✔ clearing the location is a deliberate act (101.313ms)
+✔ a node holding units cannot be deleted out from under them (103.1856ms)
+✔ reading inventory needs inventory.view and writing needs inventory.edit (167.1116ms)
+✔ a project with no structure offers no unit targets (79.216ms)
+✔ the unit picker lists structure as a tree, not by raw sort order (115.3749ms)
+✔ another workspace's units are neither listed nor reachable (228.1499ms)
+✔ deleting a project takes its units and attributes with it (79.8331ms)
+✔ the project inventory migration is re-runnable (1.1467ms)
+✔ a workspace opens with the built-in statuses, and reading them is not managing them (132.866ms)
+✔ a custom status can be added to a workspace and then used on a unit (321.1547ms)
+✔ a status name has to be one this workspace does not already use (231.6804ms)
+✔ managing the vocabulary needs Settings, not Inventory (234.8721ms)
+✔ a custom status can be recoloured and retired, and the units holding it still read (176.2464ms)
+✔ renaming a status moves its key only while no unit holds it (167.6064ms)
+✔ a status change is recorded with who and why, and re-saving it is not a change (369.2796ms)
+✔ adding a unit is not deciding its status, so those are separate rights (165.1351ms)
+✔ the status migration left the vocabulary, the trail and the grant in place (1.6838ms)
+✔ unit quotations can be generated and reviewed as history (199.4992ms)
+✔ leads can be captured, listed, and updated with agent ownership (99.429ms)
+✔ lead budgets are validated before anything is stored (60.5919ms)
+[api] POST /api/leads/import failed after 2ms
+✔ lead records are tenant-scoped and import remains an explicit placeholder (209.6574ms)
+✔ pipeline stages, follow-ups, activity, lost reasons, and customer conversion work together (400.085ms)
+✔ a booking links customer and unit and drives the unit to Booked (187.5311ms)
+✔ a booking above the threshold is held, then maker-checker approved (290.0078ms)
+✔ a held booking that is rejected was never made (258.8727ms)
+✔ a gated cancellation is held, then approved by another to release the unit (266.8037ms)
+✔ confirming a plan generates an exact dated schedule and payments move a line (346.1509ms)
+✔ recording an allocated payment mints a receipt and appends a ledger row (358.0635ms)
+✔ a late fee sweeps once per episode and clears through approval (370.3972ms)
+✔ a refund is held for approval, then paid with a credit number (356.2586ms)
+✔ a cancellation with a rule charges and refunds what the preview promised (378.7091ms)
+✔ an approved transfer repoints the booking and books the paired ledger (383.9713ms)
+✔ the collections summary classifies forward windows and aging bands (347.3312ms)
+✔ assistant is a securable module in the catalogue (0.3974ms)
+✔ the assistant answers an overdue question for a role that can read payments (305.0602ms)
+✔ the assistant reads a day threshold out of the question (74.0351ms)
+✔ the assistant can total and rank overdue lines (72.8247ms)
+✔ the assistant declines a question it cannot read without inventing an answer (69.2187ms)
+✔ the assistant refuses a topic whose module the role cannot open (68.671ms)
+✔ the assistant endpoint is closed to a role without assistant.view (61.2457ms)
+✔ chart of accounts: GET returns every source, empty by default (57.1507ms)
+✔ chart of accounts: PATCH writes and round-trips (64.9319ms)
+✔ chart of accounts: an invalid account code is 400 (60.7231ms)
+✔ chart of accounts: reading without settings.view is 403 (58.1132ms)
+✔ expenses: draft → submit → approve (peer) → mark-paid, and paid_at is set (158.5139ms)
+✔ expenses: an approver cannot clear their own submission (80.0751ms)
+✔ expenses: a rejected expense stays rejected and cannot be paid (143.7262ms)
+✔ expenses: attachments enforce mime, size, and a two-per-expense cap (215.9386ms)
+✔ vendors: create + contract + invoice lands a positive ledger row (94.9126ms)
+✔ vendors: a payment reduces the ledger and marks the invoice paid (107.9933ms)
+✔ vendors: voiding an open invoice writes an opposite adjustment (88.1211ms)
+✔ journal: composed lines map through the chart of accounts (88.6963ms)
+✔ documents file against every entity type and stream the stored bytes back (144.0851ms)
+✔ the per-type access gate keeps an ID copy away from a role without customers.edit (141.4638ms)
+✔ document uploads reject a bad mime and an oversized file, and cap the count per entity (496.4556ms)
+✔ a buyer with no linked profile is refused every portal read (70.531ms)
+✔ a linked buyer reads only their own account across every portal surface (225.154ms)
+✔ raising a portal request creates a staff ticket with a priority-derived SLA (172.4667ms)
+✔ the staff queue walks a ticket from open through assignment to resolution (195.7048ms)
+✔ communication defaults seed, an edit persists, and preview reports the tokens (134.1965ms)
+✔ the reminder dry run renders a due instalment and performs no sends (88.3195ms)
+✔ campaign CRUD drives a public webhook, and rotation strands the old token (94.7673ms)
+✔ campaign metrics trace leads through conversion to bookings (78.9533ms)
+✔ the reports catalog lists every report and the tenant's branches (64.2262ms)
+✔ every report id renders a well-formed result (98.3264ms)
+✔ an unknown report id is a 404, not an empty report (56.4152ms)
+✔ the date filter narrows a report and echoes back in the meta (68.6558ms)
+✔ a project filter is resolved into the report meta (59.6617ms)
+✔ reports are closed to a role without reports.view (67.1894ms)
+✔ the dashboard summary returns KPIs and chart series (58.9487ms)
+✔ the dashboard period is validated and defaults to twelve months (68.2278ms)
+✔ a blank or too-short search query returns no groups (55.6818ms)
+✔ global search returns hits for a term a viewer can open (63.6457ms)
+✔ search never returns a group the caller cannot view (57.3724ms)
+✔ a saved view round-trips through create and list (67.2193ms)
+✔ a duplicate saved-view name in the same scope conflicts (69.0594ms)
+✔ saved-view validation rejects a bad scope, name, and state (71.5963ms)
+✔ saved views are isolated to the user who created them (138.4974ms)
+✔ saved views require a signed-in caller (1.0269ms)
+✔ the audit log returns entries with the shape and facets the page needs (77.7041ms)
+✔ an out-of-range date window returns no audit entries (83.4068ms)
+✔ the audit module filter keeps only that module (84.429ms)
+✔ the audit actor filter keeps only that user (79.3464ms)
+✔ an unrecognised audit module is a 400, not an ignored filter (58.7741ms)
+✔ a refused privileged action is readable in the audit log under its module (132.4041ms)
+✔ the audit log is closed to a role without audit.view (63.686ms)
+✔ the audit log requires a signed-in caller (1.3337ms)
+✔ the notifications inbox returns the shape the bell and page need (55.7995ms)
+✔ the notifications inbox requires a signed-in caller (1.0719ms)
+✔ an unrecognised notification type filter is a 400, not an ignored filter (64.8356ms)
+✔ marking an unknown notification read is a 404 (56.0461ms)
+✔ an approval request notifies approvers but not its requester, then reads back (263.8229ms)
+✔ notification settings resolve every event with email honestly off (76.3836ms)
+✔ notification settings round-trip a saved channel (63.5294ms)
+✔ notification settings reject an unknown channel and an unknown type (64.1805ms)
+✔ the platform surface does not exist for tenant roles or anonymous callers (160.5363ms)
+✔ the operator directory lists every workspace with derived billing state (66.0066ms)
+✔ the workspace detail reads exactly as its recorded ledger (77.5741ms)
+✔ a fresh workspace walks the full billing lifecycle with refusals on the way (210.4248ms)
+✔ suspension revokes tenant sessions but never locks the platform out (252.2628ms)
+✔ suspending the operator's own workspace neither revokes their session nor locks them out (174.7251ms)
+✔ plan changes move only between catalogue plans and never to the same one (91.708ms)
+✔ construction answers only to roles that hold the grant (374.5037ms)
+✔ a phase's actuals are the SUM of tagged rows, and a foreign currency is never folded in (70.1456ms)
+✔ a task's movement is the phase's progress (170.9348ms)
+✔ logging progress without tasks sets the manual figure, and the log keeps the history (93.9772ms)
+✔ a phase that carries tagged spend cannot be deleted; an empty one can (100.3543ms)
+✔ the purchase trail answers only to roles that hold the grant (236.6518ms)
+✔ a requisition is raised by one desk and cleared by another (159.3006ms)
+✔ a purchase order number comes from the numbering settings and advances (93.8878ms)
+✔ material stock is the SUM of movements, and a missing target is a dash (86.4036ms)
+✔ a goods receipt moves stock and raises the payable in one transaction (184.2228ms)
+✔ the seeded PO's three-way match reads ordered, received, and invoiced (66.0659ms)
+✔ the signature desk answers only to roles that hold the grant (198.6218ms)
+✔ the signing ceremony runs without a session and files the agreement (108.1442ms)
+✔ voiding an envelope kills its signing token (89.4194ms)
+✔ integrations answers only to the settings grant (63.5257ms)
+✔ an API key reveals its plaintext once and only its prefix afterwards (87.1209ms)
+✔ webhook dispatch makes a real POST and records what the receiver said (94.1424ms)
+✔ five consecutive failures auto-pause an endpoint (180.7272ms)
+(node:29868) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ step 1 — a lead is captured and worked to Won (343.7005ms)
+✔ step 2 — the Won lead converts into a customer (22.8463ms)
+✔ step 3 — the customer books a unit on a new project (92.2675ms)
+✔ step 4 — a payment plan is confirmed and generates dated installments (87.8156ms)
+✔ step 5 — a payment covers the down note in full and part of the first installment (20.1159ms)
+✔ step 6 — the receipt reads back the payment, the customer and every allocated line (6.3601ms)
+✔ step 7 — the customer ledger posts the payment and folds a running balance (4.4127ms)
+(node:28368) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ one tenant's project id is invisible and unwritable to the other (420.3998ms)
+✔ one tenant's customer record is sealed from the other (58.687ms)
+✔ one tenant's lead is invisible to the other (98.7483ms)
+✔ bookings, payment plans, and payments are fenced per tenant (239.544ms)
+✔ workspace B cannot read any workspace A record by id across the module surface (88.4603ms)
+✔ workspace B's global search and lists return none of A's rows (15.156ms)
+(node:26392) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ installment amounts split the financed balance exactly, remainder to the front (20.7864ms)
+✔ the schedule always sums to net plus charges — no rounding drift (0.7417ms)
+✔ charges amortize across installment lines, remainder to the front (0.3957ms)
+✔ the down payment is a rounded percent and becomes the first line (0.4653ms)
+✔ a zero down payment and a zero balloon produce no line (0.4587ms)
+✔ a balloon closes the schedule with its own figure (0.6241ms)
+✔ monthly steps clamp to the last day of a shorter month (0.2914ms)
+✔ a leap-day anniversary is preserved into a month that has the day (0.3053ms)
+✔ quarterly steps advance three months at a time (0.4477ms)
+✔ custom frequency steps by a fixed day count (0.3742ms)
+✔ day stepping crosses month and year boundaries in UTC (0.2704ms)
+✔ scheduleEndDate reports the latest due date (0.268ms)
+✔ a one-cent net still produces exactly one whole-unit line (0.251ms)
+✔ a partial payment marks the line partially paid and drops the balance (566.7717ms)
+✔ allocating to a line that is not yet due is a legal advance and closes it (180.4087ms)
+✔ one payment split across several installments allocates each line (165.5076ms)
+✔ allocating beyond a line's remaining balance is refused (178.448ms)
+✔ an allocation total that does not match the payment amount is refused (138.5368ms)
+✔ a zero or negative allocation, and a zero payment, are refused (146.1509ms)
+✔ a percentage late fee rounds the basis-point slice of the outstanding balance (180.0868ms)
+✔ the grace period holds a fee back until enough days have passed (204.0971ms)
+✔ a percentage so small it rounds to zero assesses no fee (187.0986ms)
+✔ a zero max-assessments rule re-charges a line without limit, as documented (186.4561ms)
+✔ an untouched workspace cancels with no charge and no refund (182.2833ms)
+✔ the cancellation charge honours its cap and is clamped to what was paid (176.7007ms)
+✔ a refund cannot exceed what the referenced payment still has un-refunded (185.0036ms)
+✔ the ledger running balance folds every signed event in time order (185.2965ms)
+(node:17240) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ every role's grants match the platform default catalogue across all modules and actions (1379.4376ms)
+✔ a per-tenant override takes precedence over the platform default, both ways (5.9296ms)
+✔ every module's read route answers 403 exactly when the role lacks the view grant (1009.7764ms)
+✔ create, edit, delete and approve routes answer 403 exactly when the role lacks the grant (1418.4819ms)
+✔ a role that can edit units but not change their status is blocked from moving one (55.3804ms)
+✔ a booking over the threshold is held for approval and applied only by another approver (332.1013ms)
+ℹ tests 277
+ℹ suites 0
+ℹ pass 275
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30651.7079
+
+✖ failing tests:
+
+test at server\api.test.ts:5961:1
+✖ a unit records its type, its place in the structure, and its price (90.0929ms)
+  AssertionError [ERR_ASSERTION]: UnitView response shape drifted from the client contract
+  + actual - expected
+  
+    [
+      'attributes',
+      'basePrice',
+  +   'category',
+      'createdAt',
+      'id',
+      'location',
+      'priceBreakdown',
+      'pricing',
+  
+      at assertExactKeys (file:///C:/Users/DELL/Downloads/Innovista-Estate/server/api.test.ts:3629:10)
+      at TestContext.<anonymous> (file:///C:/Users/DELL/Downloads/Innovista-Estate/server/api.test.ts:5976:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'attributes',      'basePrice',
+      'category',        'createdAt',
+      'id',              'location',
+      'priceBreakdown',  'pricing',
+      'sizeSqft',        'status',
+      'statusLabel',     'statusTone',
+      'structureNodeId', 'structurePath',
+      'unitCode',        'unitType',
+      'updatedAt'
+    ],
+    expected: [
+      'attributes',    'basePrice',
+      'createdAt',     'id',
+      'location',      'priceBreakdown',
+      'pricing',       'sizeSqft',
+      'status',        'statusLabel',
+      'statusTone',    'structureNodeId',
+      'structurePath', 'unitCode',
+      'unitType',      'updatedAt'
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at server\api.test.ts:6436:1
+✖ a unit list states its totals and the currency they are in (125.0543ms)
+  AssertionError [ERR_ASSERTION]: GET units response shape drifted from the client contract
+  + actual - expected
+  
+    [
+      'canChangeStatus',
+      'canEdit',
+  +   'categories',
+      'currency',
+      'totals',
+      'units'
+    ]
+  
+      at assertExactKeys (file:///C:/Users/DELL/Downloads/Innovista-Estate/server/api.test.ts:3629:10)
+      at TestContext.<anonymous> (file:///C:/Users/DELL/Downloads/Innovista-Estate/server/api.test.ts:6485:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'canChangeStatus', 'canEdit', 'categories', 'currency', 'totals', 'units' ],
+    expected: [ 'canChangeStatus', 'canEdit', 'currency', 'totals', 'units' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+ ELIFECYCLE  Command failed with exit code 1.

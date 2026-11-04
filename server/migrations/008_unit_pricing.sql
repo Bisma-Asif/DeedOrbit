@@ -1,0 +1,5 @@
+-- Migration 0008 — unit pricing configuration.
+--
+-- The column is applied by addUnitPricingColumn in migrations.ts because the
+-- preceding inventory-status rebuild may already have created it. Inspecting
+-- PRAGMA table_info keeps this upgrade safe for both database histories.

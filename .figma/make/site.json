@@ -1,0 +1,11 @@
+{
+  "title": "DeedOrbit",
+  "description": "A professional ERP platform for property developers and sales teams offering streamlined management of projects, leads, payments, and reports.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

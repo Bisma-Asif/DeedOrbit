@@ -1,0 +1,432 @@
+@import "tailwindcss";
+
+/*
+  DeedOrbit design tokens.
+
+  Rules for this product:
+  - The application chrome (sidebar, top bar) is deep slate/navy. Content sits on off-white.
+  - Emerald is the only interactive/accent hue and the only "positive" hue.
+  - Amber is reserved for pending/due. Muted red is reserved for overdue/danger.
+  - No purple, no violet, no blue-to-purple gradients, no glassmorphism, no neon.
+
+  Typography is a local stack on purpose: this back office is expected to run on
+  locked-down intranets, so no font CDN request is made. Inter is used when the
+  workstation has it installed, otherwise the platform UI font.
+*/
+
+:root {
+  /* Surfaces */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* Brand / actions */
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --primary-foreground: #ffffff;
+  --primary-subtle: #f0fdfa;
+  --primary-subtle-foreground: #115e59;
+
+  /* Neutrals */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #1e293b;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #e2e8f0;
+  --accent-foreground: #0f172a;
+
+  /* Lines + focus */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --input: #cbd5e1;
+  --ring: #0f766e;
+
+  /* Status (the only permitted non-neutral hues) */
+  --success: #15803d;
+  --success-subtle: #ecfdf3;
+  --success-border: #bbf7d0;
+  --warning: #b45309;
+  --warning-subtle: #fffbeb;
+  --warning-border: #fde68a;
+  --danger: #b91c1c;
+  --danger-subtle: #fef2f2;
+  --danger-border: #fecaca;
+  /* Blue is not a mood colour here. It marks exactly one thing: a unit that is
+     committed to a buyer but not yet completed, so it is neither on the market
+     nor done. Keeping it out of the palette's general vocabulary is what stops it
+     drifting into "important" elsewhere. */
+  --info: #1d4ed8;
+  --info-subtle: #eff6ff;
+  --info-border: #bfdbfe;
+
+  /* Application chrome */
+  --nav: #0f172a;
+  --nav-foreground: #e2e8f0;
+  --nav-muted: #94a3b8;
+  --nav-subtle: #64748b;
+  --nav-hover: #1e293b;
+  --nav-active: #1e293b;
+  --nav-border: #1e293b;
+
+  /* Chart series. Tonal shades taken only from the hues this product owns —
+     the emerald/teal accent, amber for holds and pending money, slate for
+     everything neutral — so a second money line and five inventory statuses
+     stay separable without inventing an accent hue. Two lines of the same
+     colour at different opacities read as one series, which is why the money
+     lines are split across hue families instead. */
+  --chart-sales: var(--primary);
+  --chart-collections: #475569;
+  --chart-target: #94a3b8;
+  --chart-sold: var(--primary);
+  --chart-available: #5eead4;
+  --chart-booked: #b45309;
+  --chart-reserved: #fcd34d;
+  --chart-blocked: #94a3b8;
+  --chart-other: #cbd5e1;
+
+  --radius: 0.375rem;
+}
+
+@theme inline {
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-subtle-foreground: var(--primary-subtle-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-border: var(--warning-border);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+  --color-danger-border: var(--danger-border);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+  --color-info-border: var(--info-border);
+
+  --color-nav: var(--nav);
+  --color-nav-foreground: var(--nav-foreground);
+  --color-nav-muted: var(--nav-muted);
+  --color-nav-subtle: var(--nav-subtle);
+  --color-nav-hover: var(--nav-hover);
+  --color-nav-active: var(--nav-active);
+  --color-nav-border: var(--nav-border);
+
+  --color-chart-sales: var(--chart-sales);
+  --color-chart-collections: var(--chart-collections);
+  --color-chart-target: var(--chart-target);
+  --color-chart-sold: var(--chart-sold);
+  --color-chart-available: var(--chart-available);
+  --color-chart-booked: var(--chart-booked);
+  --color-chart-reserved: var(--chart-reserved);
+  --color-chart-blocked: var(--chart-blocked);
+  --color-chart-other: var(--chart-other);
+
+  --radius-xs: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-raised: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-overlay:
+    0 12px 32px -8px rgb(15 23 42 / 0.18), 0 4px 8px -4px rgb(15 23 42 / 0.1);
+
+  --animate-overlay-in: overlay-in 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-overlay-out: overlay-out 100ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-content-in: content-in 140ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-content-out: content-out 100ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-fade-in: fade-in 120ms ease-out;
+  --animate-fade-out: fade-out 100ms ease-in;
+  --animate-slide-in-from-top: slide-in-from-top 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-from-bottom: slide-in-from-bottom 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-from-left: slide-in-from-left 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-out-to-left: slide-out-to-left 160ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-collapsible-down: collapsible-down 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-collapsible-up: collapsible-up 160ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes overlay-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes overlay-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes content-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes content-out {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-2px) scale(0.99);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes slide-in-from-top {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-in-from-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-in-from-left {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slide-out-to-left {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--recollapsible-height);
+    }
+  }
+  @keyframes collapsible-up {
+    from {
+      height: var(--recollapsible-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    background-color: var(--background);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
+  }
+
+  /* Financial data should always align in columns. */
+  table,
+  input[type="number"] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  ::selection {
+    background-color: #ccfbf1;
+    color: #134e4a;
+  }
+}
+
+@layer utilities {
+  /* Quiet, enterprise scrollbars. */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-color: var(--border-strong);
+    background-clip: content-box;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-thumb:hover {
+    background-color: var(--muted-foreground);
+    background-clip: content-box;
+  }
+}
+
+/*
+  Quotation printing.
+
+  The quotation document is the only thing in the product that prints, and it
+  prints through the browser — "Print → Save as PDF" is what a locked-down
+  intranet workstation actually has, and no dependency here ships a font or a
+  PDF encoder. When the print dialog opens, everything except the dialog marked
+  [data-document-print] is removed: the app shell, the sheet and trail dialogs
+  sitting underneath, every overlay backdrop, and the print dialog's own
+  toolbar. The tokens carry onto paper unchanged — same slate text, same
+  borders — which is why the document is written in classes and not in
+  print-specific colours.
+*/
+
+@media print {
+  body:has([data-document-print]) {
+    background: #fff;
+  }
+
+  /* Only the print portal survives; :has keeps this conditional on a print
+     actually being open, so nothing else ever changes page. */
+  body:has([data-document-print]) > *:not(div:has([data-document-print])) {
+    display: none !important;
+  }
+
+  body:has([data-document-print]) [data-document-print] {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    print-color-adjust: exact;
+  }
+
+  /* The scroll container inside the dialog must not clip the page. */
+  body:has([data-document-print]) [data-document-print] .overflow-y-auto {
+    overflow: visible !important;
+    max-height: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  /* The paper frame inside the preview loses its frame; the document inside
+     keeps its own borders. */
+  body:has([data-document-print]) [data-document-print] .shadow-card {
+    border: 0 !important;
+    box-shadow: none !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  body:has([data-document-print]) [data-document-print] .print-hidden,
+  body:has([data-document-print]) [data-document-print] [data-no-print],
+  body:has([data-document-print]) [role="dialog"] [data-slot="dialog-close"] {
+    display: none !important;
+  }
+
+  /* Financial rows should not split across a page boundary. */
+  body:has([data-document-print]) .avoid-break-inside {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 14mm;
+    size: A4;
+  }
+}
+
