@@ -1,0 +1,33 @@
+# Render blueprint for the DeedOrbit API.
+#
+# The frontend stays on Vercel; this deploys only the Node + SQLite backend.
+# Deploy: on Render choose "New +" -> "Blueprint" and connect this repo. Render
+# reads this file and creates the service.
+#
+# After it is live, copy the service's URL and set it in vercel.json as the
+# `/api/:path*` rewrite destination, then push so Vercel proxies to it.
+
+services:
+  - type: web
+    name: deedorbit-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEEDORBIT_DB
+        value: /data/deedorbit.db
+      # A base64-encoded 32-byte key. Generate one with:
+      #   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+      # `sync: false` makes Render ask for the value once at create time.
+      - key: ENCRYPTION_KEY
+        sync: false
+    # Persistence: attach a disk so real signups survive restarts. A disk
+    # requires a paid instance plan. On the free plan the SQLite file lives on
+    # ephemeral storage and the demo data simply re-seeds on each boot.
+    # disk:
+    #   name: deedorbit-data
+    #   mountPath: /data
+    #   sizeGB: 1

@@ -26,3 +26,10 @@ logs/
 # beside it.
 /.plugins/
 /.opencode-skills/
+
+.vercel
+.env*
+ 
+# Vercel CLI local state and deploy scripts 
+.vercel/ 
+.vercel-tmp/ 

@@ -3537,7 +3537,10 @@ export function createApp() {
 
 // --- boot ------------------------------------------------------------------
 
-const PORT = Number(process.env.API_PORT ?? 8444)
+// `API_PORT` is the local/dev override; `PORT` is what Render, Railway and Fly
+// inject at runtime, so honouring both lets one image bind the host's port
+// without an extra env mapping.
+const PORT = Number(process.env.API_PORT ?? process.env.PORT ?? 8444)
 
 const HOST = process.env.API_HOST ?? "127.0.0.1"
 

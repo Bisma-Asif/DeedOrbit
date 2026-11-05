@@ -1,0 +1,20 @@
+# Keep the Docker build context small. The image only needs package.json,
+# server/ and shared/, so everything else is excluded.
+node_modules
+dist
+build
+.cache
+.vite
+.vercel
+.vercel-tmp
+data
+.git
+*.log
+*.out
+*.png
+_test.txt
+_tc.txt
+_signup*
+_session*
+_su.txt
+commit_msg.txt
