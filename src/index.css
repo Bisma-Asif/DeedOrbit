@@ -88,6 +88,22 @@
   --chart-other: #cbd5e1;
 
   --radius: 0.375rem;
+
+  /*
+    Public marketing site extensions.
+
+    These tokens are only consumed by `src/features/marketing/*`. The back-office
+    app never renders `--font-display`, `--font-urdu` or `--sand`, so a glyph in
+    those families is never requested for a logged-in screen — the `@font-face`
+    rules below stay dormant (no CDN, no download) until the landing page mounts.
+    Sand/stone is the one warm neutral allowed for premium sections; it is not a
+    status hue.
+  */
+  --sand: #e7e2d8;
+  --sand-deep: #d9d2c5;
+  --sand-foreground: #1e293b;
+  --slate-800: #1e293b;
+  --slate-950: #0f172a;
 }
 
 @theme inline {
@@ -152,6 +168,18 @@
   --color-chart-reserved: var(--chart-reserved);
   --color-chart-blocked: var(--chart-blocked);
   --color-chart-other: var(--chart-other);
+
+  --color-sand: var(--sand);
+  --color-sand-deep: var(--sand-deep);
+  --color-sand-foreground: var(--sand-foreground);
+  --color-slate-800: var(--slate-800);
+  --color-slate-950: var(--slate-950);
+
+  --font-display:
+    "Playfair Display", "Fraunces", Georgia, "Times New Roman", serif;
+  --font-urdu:
+    "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Nafees Nastaleeq",
+    "Segoe UI", serif;
 
   --radius-xs: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 1px);
@@ -368,6 +396,119 @@
   borders — which is why the document is written in classes and not in
   print-specific colours.
 */
+
+/*
+  Marketing-only webfonts, sourced from /public/fonts so the intranet build makes
+  zero external requests. When the files are absent the browser falls back to the
+  next family in the stack (serif / system Nastaliq) and the page still looks
+  intentional — nothing is broken, it just is not the exact display face yet.
+  See `public/media/README.md` for the expected files.
+*/
+@font-face {
+  font-family: "Playfair Display";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/playfair-display-var.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Nastaliq Urdu";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/noto-nastaliq-urdu.woff2") format("woff2");
+}
+
+@layer utilities {
+  /* Urdu Nastaliq needs generous leading or the ascenders clip. */
+  .font-urdu {
+    font-family: var(--font-urdu);
+    line-height: 2.1;
+  }
+}
+
+/*
+  Hero 3D scene. Pure CSS 3D (preserve-3d faces) so it ships no WebGL dependency
+  and stays light. Every animation is switched off under reduced motion, and the
+  component swaps to a static SVG for reduced-motion / low-power / no-WebGL.
+*/
+.mk-persp {
+  perspective: 1200px;
+}
+.mk-3d {
+  transform-style: preserve-3d;
+}
+@keyframes mk-orbit {
+  from {
+    transform: rotateX(-16deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-16deg) rotateY(360deg);
+  }
+}
+@keyframes mk-bob {
+  0%,
+  100% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+@keyframes mk-ring {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+@keyframes mk-scroll-cue {
+  0% {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.mk-anim-orbit {
+  animation: mk-orbit 32s linear infinite;
+}
+.mk-anim-bob {
+  animation: mk-bob 6s ease-in-out infinite;
+}
+.mk-anim-ring {
+  animation: mk-ring 48s linear infinite;
+}
+.mk-anim-cue {
+  animation: mk-scroll-cue 1.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mk-anim-orbit,
+  .mk-anim-bob,
+  .mk-anim-ring,
+  .mk-anim-cue {
+    animation: none;
+  }
+}
+
+/*
+  Urdu typography for the marketing tree. The provider flips <html dir="rtl">; this
+  wrapper class re-points the Latin serif/sans stacks to Nastaliq so headlines and
+  body copy render correctly without each component having to special-case the font.
+*/
+.mk-rtl {
+  font-family: var(--font-urdu);
+}
+.mk-rtl .font-display {
+  font-family: var(--font-urdu);
+  line-height: 1.9;
+}
 
 @media print {
   body:has([data-document-print]) {

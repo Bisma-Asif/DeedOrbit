@@ -8,7 +8,11 @@ import { useEffect, useState } from "react"
 
 function readPath(): string {
   const raw = window.location.hash.replace(/^#/, "")
-  if (!raw || raw === "/") return "/dashboard"
+  // A bare URL (no hash) opens the public marketing home. The landing owns "/";
+  // `App` decides whether that shows the pitch or, for a signed-in visitor, the
+  // "Go to Dashboard" entry. Every in-app screen still uses an explicit hash, so
+  // deep links like `#/dashboard` and `#/bookings/:id` are unaffected.
+  if (!raw) return "/"
   return raw.startsWith("/") ? raw : `/${raw}`
 }
 

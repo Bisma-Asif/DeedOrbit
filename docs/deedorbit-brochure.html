@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DeedOrbit — One-Page Brochure</title>
+    <style>
+      :root {
+        --slate: #1e293b;
+        --navy: #0f172a;
+        --emerald: #059669;
+        --emerald-soft: #ecfdf5;
+        --amber: #b45309;
+        --red: #b91c1c;
+        --ink: #334155;
+        --line: #e2e8f0;
+        --bg: #f8fafc;
+        --muted: #64748b;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        color: var(--ink);
+        font-size: 10.5px;
+        line-height: 1.4;
+        background: #fff;
+      }
+      @page { size: A4 portrait; margin: 0; }
+      .sheet {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 12mm 12mm 8mm 12mm;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Hero band */
+      .hero {
+        background: linear-gradient(135deg, var(--navy), var(--slate));
+        color: #fff;
+        border-radius: 10px;
+        padding: 16px 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero .accent {
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 6px;
+        background: var(--emerald);
+      }
+      .brand { font-size: 26px; font-weight: 800; letter-spacing: 0.4px; }
+      .brand .dot { color: #34d399; }
+      .hero h1 { font-size: 15px; margin: 6px 0 2px; color: #fff; font-weight: 700; }
+      .hero p { margin: 2px 0; color: #cbd5e1; }
+      .hero .cta {
+        position: absolute;
+        right: 18px; top: 16px;
+        text-align: right;
+      }
+      .hero .url { color: #6ee7b7; font-weight: 700; font-size: 12px; }
+      .hero .pill {
+        display: inline-block;
+        margin-top: 4px;
+        background: var(--emerald);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+      }
+
+      .lead {
+        margin: 10px 2px 4px;
+        font-size: 11px;
+        color: var(--slate);
+      }
+      .lead b { color: var(--emerald); }
+
+      h2.cap {
+        font-size: 12px;
+        color: var(--navy);
+        margin: 12px 0 5px;
+        padding-bottom: 3px;
+        border-bottom: 2px solid var(--emerald);
+      }
+
+      /* Module chip grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .chip {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--slate);
+        border-radius: 5px;
+        padding: 5px 7px;
+        background: var(--bg);
+      }
+      .chip b { color: var(--navy); font-size: 10.5px; display: block; }
+      .chip span { color: var(--muted); font-size: 9.5px; }
+
+      /* Two columns */
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+      .prob { display: flex; gap: 6px; margin: 4px 0; }
+      .prob .x { color: var(--red); font-weight: 800; flex: 0 0 auto; }
+      .prob .v { color: var(--emerald); font-weight: 800; }
+      .prob p { margin: 0; }
+
+      ul.safe { margin: 4px 0 0; padding-left: 16px; }
+      ul.safe li { margin: 2px 0; }
+      ul.safe li b { color: var(--slate); }
+
+      /* Benefit strip */
+      .strip {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .stat {
+        text-align: center;
+        border: 1px solid var(--line);
+        border-top: 3px solid var(--emerald);
+        border-radius: 6px;
+        padding: 7px 4px;
+        background: var(--emerald-soft);
+      }
+      .stat b { display: block; color: var(--emerald); font-size: 12px; }
+      .stat span { color: var(--slate); font-size: 9px; }
+
+      .foot {
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .foot .cta2 {
+        background: var(--emerald);
+        color: #fff;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+      }
+
+      @media print {
+        .hero, .stat, .chip, .sheet {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sheet">
+      <div class="hero">
+        <div class="accent"></div>
+        <div class="brand">Deed<span class="dot">•</span>Orbit</div>
+        <div class="cta">
+          <div class="url">deedorbit.vercel.app</div>
+          <span class="pill">Live demo</span>
+        </div>
+        <h1>Real Estate ERP — poora business ek system mein</h1>
+        <p>Projects, booking, installments, documents, construction aur accounts —</p>
+        <p>alag-alag Excel files aur WhatsApp groups ke bina, ek hi secure platform par.</p>
+      </div>
+
+      <p class="lead">
+        Developers, housing societies, plot-schemes, property dealers aur
+        construction companies ke liye — <b>har rupee ka hisaab, har document ki
+        verification, har customer ka portal.</b>
+      </p>
+
+      <h2 class="cap">Kya kya kar sakte hain</h2>
+      <div class="grid">
+        <div class="chip"><b>Projects &amp; Units</b><span>Marla-wise units, live status</span></div>
+        <div class="chip"><b>Leads &amp; Pipeline</b><span>Follow-up stage-by-stage</span></div>
+        <div class="chip"><b>Quotations</b><span>Quote → booking ek click</span></div>
+        <div class="chip"><b>Bookings + Plans</b><span>Installment schedules</span></div>
+        <div class="chip"><b>Payments</b><span>Receipts, late fees, ledger</span></div>
+        <div class="chip"><b>Accounting</b><span>Chart of accounts, journal</span></div>
+        <div class="chip"><b>Documents</b><span>CNIC OCR + verification</span></div>
+        <div class="chip"><b>Approvals</b><span>Maker-checker control</span></div>
+        <div class="chip"><b>Customer Portal</b><span>Khud status dekhein</span></div>
+        <div class="chip"><b>Construction</b><span>Contractors, tasks, stock</span></div>
+        <div class="chip"><b>Reminders</b><span>Due + expiry auto-alerts</span></div>
+        <div class="chip"><b>Reports</b><span>Dashboard + CSV export</span></div>
+      </div>
+
+      <div class="cols">
+        <div>
+          <h2 class="cap">Kaunse masle hal hota hai</h2>
+          <div class="prob"><span class="x">✗</span><p>Excel/bahi alag-alag, figures match nahi</p></div>
+          <div class="prob"><span class="x">✗</span><p>Kisko kitna dena hai — khabar nahi</p></div>
+          <div class="prob"><span class="x">✗</span><p>Ek CNIC se duplicate bookings</p></div>
+          <div class="prob"><span class="x">✗</span><p>"Paise to diye the" — jhagda</p></div>
+          <div class="prob"><span class="x">✗</span><p>Bina manager discount/refund</p></div>
+          <div class="prob"><span class="x">✗</span><p>Customer roz status ke liye phone</p></div>
+        </div>
+        <div>
+          <h2 class="cap">DeedOrbit ka hal</h2>
+          <ul class="safe">
+            <li><b>Ek hi jagah</b> customer, unit, payment aur accounts.</li>
+            <li><b>Due-date + reminders</b> aur pending-list khud saamne.</li>
+            <li><b>Duplicate CNIC flag</b> + verification tak booking block.</li>
+            <li><b>Har payment ki receipt</b> + ledger + audit trail.</li>
+            <li><b>Maker-checker approvals</b> — bina authorize badlaav nahi.</li>
+            <li><b>Customer Portal</b> — status customer khud dekhta hai.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="cap">Fayda</h2>
+      <div class="strip">
+        <div class="stat"><b>↑</b><span>Zyada recovery</span></div>
+        <div class="stat"><b>✓</b><span>Kam fraud</span></div>
+        <div class="stat"><b>⏱</b><span>Kam admin time</span></div>
+        <div class="stat"><b>◉</b><span>Real-time control</span></div>
+        <div class="stat"><b>★</b><span>Customer trust</span></div>
+        <div class="stat"><b>∞</b><span>Scale 10→1000 units</span></div>
+      </div>
+
+      <div class="foot">
+        <span>Multi-tenant · Role-based access · 2FA · Encrypted documents · Audit log</span>
+        <span class="cta2">Aaj hi demo lein → deedorbit.vercel.app</span>
+      </div>
+    </div>
+  </body>
+</html>

@@ -128,6 +128,8 @@ import * as notifications from "./routes/notifications.ts"
 
 import * as platform from "./routes/platform.ts"
 
+import * as demoRequests from "./routes/demo-requests.ts"
+
 import {
   SESSION_COOKIE,
   purgeExpiredSessions,
@@ -203,6 +205,28 @@ const routes: Route[] = [
     pattern: "/api/auth/logout",
 
     handler: auth.logout,
+
+    public: true,
+  },
+
+  // --- marketing: book-a-demo intake --------------------------------------
+
+  {
+    method: "POST",
+
+    pattern: "/api/demo-requests",
+
+    handler: demoRequests.create,
+
+    public: true,
+  },
+
+  {
+    method: "GET",
+
+    pattern: "/api/demo-requests",
+
+    handler: demoRequests.list,
 
     public: true,
   },

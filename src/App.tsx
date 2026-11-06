@@ -47,6 +47,9 @@ import { SignupPage } from "@/features/auth/signup-page"
 import { ForgotPasswordPage } from "@/features/auth/forgot-password-page"
 import { ResetPasswordPage } from "@/features/auth/reset-password-page"
 import { TwoFactorPage } from "@/features/auth/two-factor-page"
+import LandingPage from "@/features/marketing/landing-page"
+import { PrivacyPage } from "@/features/marketing/legal/privacy-page"
+import { TermsPage } from "@/features/marketing/legal/terms-page"
 import { findModuleByPath, isPlatformPath } from "@/lib/navigation"
 import { ROLES } from "@shared/access"
 import { navigate, readQueryParam, routePath, useRoute } from "@/lib/router"
@@ -62,6 +65,15 @@ const PUBLIC_ROUTES = new Set([
   "/recover/reset",
 ])
 
+/**
+ * The public marketing surfaces. They render for anyone — a signed-in visitor
+ * still sees them, with the navbar swapping the auth buttons for "Go to
+ * Dashboard" — and they are resolved before the session gate so the landing
+ * paints without waiting on `GET /api/auth/session`. They are deliberately kept
+ * out of the app's auth-redirect rule below so opening "/" never bounces.
+ */
+const MARKETING_ROUTES = new Set(["/", "/privacy", "/terms"])
+
 export default function App() {
   const rawPath = useRoute()
   const path = routePath(rawPath)
@@ -69,6 +81,7 @@ export default function App() {
     useSession()
 
   const isPublic = PUBLIC_ROUTES.has(path)
+  const isMarketing = MARKETING_ROUTES.has(path)
 
   // A signing link is opened by a recipient who has no session at all, so the
   // ceremony is treated as public: it must never redirect to sign-in.
@@ -88,7 +101,8 @@ export default function App() {
   useEffect(() => {
     if (loading) return
     if (!data) {
-      if (!twofaRequired && !isPublic && !onSignRoute) navigate("/login")
+      if (!twofaRequired && !isPublic && !isMarketing && !onSignRoute)
+        navigate("/login")
       return
     }
     if (isPortalUser) {
@@ -103,6 +117,7 @@ export default function App() {
     data,
     twofaRequired,
     isPublic,
+    isMarketing,
     path,
     isPortalUser,
     onPortalRoute,
@@ -247,6 +262,16 @@ export default function App() {
         : ""
     const signRecipientId = readQueryParam("recipientId", rawPath) ?? ""
     return <SignPage token={signToken} recipientId={signRecipientId} />
+  }
+
+  // The marketing pages are shown before any session/loading gate: they need no
+  // cookie, must paint immediately for LCP, and a signed-in visitor who opens
+  // "/" should still land on the pitch (with a "Go to Dashboard" CTA), not be
+  // redirected into the shell.
+  if (isMarketing) {
+    if (path === "/privacy") return <PrivacyPage />
+    if (path === "/terms") return <TermsPage />
+    return <LandingPage />
   }
 
   if (loading) return <BootScreen />

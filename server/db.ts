@@ -545,6 +545,13 @@ function migrate(db: DatabaseSync): void {
         "utf8",
       ),
     },
+    {
+      name: "0075_demo_requests",
+      sql: readFileSync(
+        join(here, "migrations", "075_demo_requests.sql"),
+        "utf8",
+      ),
+    },
   ]) {
     if (applied.has(migration.name)) continue
     db.exec("BEGIN")

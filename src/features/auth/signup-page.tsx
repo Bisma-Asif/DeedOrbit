@@ -67,6 +67,8 @@ export function SignupPage() {
   const [pending, setPending] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [serverFields, setServerFields] = useState<Record<string, string>>({})
+  const [agreed, setAgreed] = useState(false)
+  const [agreeError, setAgreeError] = useState<string | null>(null)
 
   const localErrors = validate(values, confirm)
   const errors: Errors = { ...localErrors, ...serverFields }
@@ -86,6 +88,11 @@ export function SignupPage() {
     setServerFields({})
     setFormError(null)
     if (Object.keys(localErrors).length > 0) return
+    if (!agreed) {
+      setAgreeError("Please accept the Terms and Privacy Policy.")
+      return
+    }
+    setAgreeError(null)
 
     setPending(true)
     try {
@@ -113,6 +120,10 @@ export function SignupPage() {
         title="Create your workspace"
         description="Sets up a new tenant with you as Tenant Owner. You can invite your team and adjust their roles afterwards."
       />
+
+      <div className="-mt-2 mb-4 inline-flex items-center gap-1.5 rounded-full bg-primary-subtle px-3 py-1 text-[11.5px] font-semibold text-primary-subtle-foreground">
+        14-day free trial · no card required
+      </div>
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         {formError ? (
@@ -210,6 +221,34 @@ export function SignupPage() {
         </Field>
 
         <PasswordMeter password={values.password} />
+
+        <label className="flex items-start gap-2 text-[12.5px] leading-5 text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(event) => {
+              setAgreed(event.target.checked)
+              if (event.target.checked) setAgreeError(null)
+            }}
+            className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
+          />
+          <span>
+            I agree to the{" "}
+            <a href="#/terms" className="font-medium text-primary hover:underline">
+              Terms
+            </a>{" "}
+            and{" "}
+            <a href="#/privacy" className="font-medium text-primary hover:underline">
+              Privacy Policy
+            </a>
+            .
+          </span>
+        </label>
+        {agreeError ? (
+          <p className="-mt-2 text-[12px] text-danger" role="alert">
+            {agreeError}
+          </p>
+        ) : null}
 
         <Field
           label="Confirm password"

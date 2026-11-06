@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeedOrbit — Client Feature Sheet & Demo Flow</title>
+    <style>
+      :root {
+        --slate: #1e293b;
+        --navy: #0f172a;
+        --emerald: #059669;
+        --emerald-soft: #ecfdf5;
+        --amber: #b45309;
+        --amber-soft: #fffbeb;
+        --red: #b91c1c;
+        --ink: #334155;
+        --line: #e2e8f0;
+        --bg: #f8fafc;
+        --muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #fff;
+        color: var(--ink);
+        font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .page {
+        padding: 20mm 16mm 16mm 16mm;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 14mm;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        color: var(--navy);
+        margin: 0;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 6px 0;
+      }
+
+      strong {
+        color: var(--slate);
+      }
+
+      /* Masthead */
+      .masthead {
+        border: 1px solid var(--line);
+        border-left: 6px solid var(--emerald);
+        border-radius: 8px;
+        padding: 18px 20px;
+        background: linear-gradient(180deg, #ffffff, var(--bg));
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .brand {
+        font-size: 30px;
+        letter-spacing: 0.5px;
+        color: var(--navy);
+        font-weight: 800;
+      }
+
+      .brand .dot {
+        color: var(--emerald);
+      }
+
+      .tag {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: right;
+      }
+
+      .subtitle {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--slate);
+      }
+
+      .live {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--emerald);
+        font-weight: 600;
+      }
+
+      .live a {
+        color: var(--emerald);
+        text-decoration: none;
+      }
+
+      /* Section heading */
+      .kicker {
+        display: inline-block;
+        margin-top: 22px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--slate);
+        padding: 4px 10px;
+        border-radius: 4px;
+      }
+
+      h2.section {
+        font-size: 18px;
+        margin: 10px 0 4px;
+        border-bottom: 2px solid var(--emerald);
+        padding-bottom: 6px;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0 4px;
+        font-size: 11.5px;
+      }
+
+      th {
+        background: var(--navy);
+        color: #fff;
+        text-align: left;
+        font-size: 10.5px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        padding: 7px 9px;
+      }
+
+      td {
+        border: 1px solid var(--line);
+        padding: 7px 9px;
+        vertical-align: top;
+      }
+
+      tbody tr:nth-child(even) td {
+        background: var(--bg);
+      }
+
+      td.name {
+        font-weight: 700;
+        color: var(--slate);
+        width: 26%;
+        white-space: nowrap;
+      }
+
+      /* Pill for the arrow column */
+      .arrow {
+        color: var(--emerald);
+        font-weight: 700;
+      }
+
+      /* Benefit strip */
+      .benefits {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .benefit {
+        border: 1px solid var(--line);
+        border-top: 3px solid var(--emerald);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: var(--emerald-soft);
+      }
+
+      .benefit h4 {
+        font-size: 12px;
+        color: var(--emerald);
+        margin-bottom: 3px;
+      }
+
+      .benefit p {
+        margin: 0;
+        font-size: 11px;
+        color: var(--slate);
+      }
+
+      /* Demo flow */
+      ol.flow {
+        margin: 8px 0 4px;
+        padding-left: 0;
+        list-style: none;
+        counter-reset: step;
+      }
+
+      .step {
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 10px 12px 10px 12px;
+        margin: 8px 0;
+        break-inside: avoid;
+      }
+
+      .step-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+
+      .step-no {
+        counter-increment: step;
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--slate);
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .step-title {
+        font-weight: 700;
+        color: var(--navy);
+        font-size: 13px;
+      }
+
+      .step ul {
+        margin: 2px 0 0;
+        padding-left: 34px;
+      }
+
+      .step li {
+        margin: 2px 0;
+      }
+
+      .note {
+        margin: 4px 0 0 34px;
+        font-size: 11px;
+        color: var(--amber);
+        background: var(--amber-soft);
+        border-left: 3px solid var(--amber);
+        padding: 4px 8px;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .danger {
+        color: var(--red);
+        font-weight: 700;
+      }
+
+      .footer {
+        margin-top: 20px;
+        border-top: 1px solid var(--line);
+        padding-top: 8px;
+        font-size: 10px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .page-break {
+        break-before: page;
+      }
+
+      @media print {
+        .masthead,
+        .step,
+        .benefit,
+        table {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <!-- ============ PAGE 1 : PITCH / FEATURE SHEET ============ -->
+      <div class="masthead">
+        <div class="brand-row">
+          <div class="brand">Deed<span class="dot">•</span>Orbit</div>
+          <div class="tag">Real Estate ERP<br />All-in-one platform</div>
+        </div>
+        <div class="subtitle">
+          Property business ka poora kaam — projects, booking, payments,
+          documents, construction aur accounts — <strong>ek secure system</strong>
+          mein. Alag-alag Excel files aur WhatsApp groups ki zaroorat khatam.
+        </div>
+        <div class="live">
+          Live demo: <a href="https://deedorbit.vercel.app">https://deedorbit.vercel.app</a>
+          &nbsp;·&nbsp; Har company ka apna alag khana (multi-tenant) — data aapas mein nahi milta.
+        </div>
+      </div>
+
+      <span class="kicker">Kiske liye</span>
+      <p>
+        Developers, plot-schemes / housing societies, property dealers aur
+        construction companies — jinke paas units, customers, installments aur
+        vendors ka hisaab barqarar rakhna mushkil ho raha hai.
+      </p>
+
+      <span class="kicker">Core Modules</span>
+      <table>
+        <thead>
+          <tr><th>Module</th><th>Kya karta hai</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Projects &amp; Units</td><td>Har project, units (plot/flat/ghar), categories aur <strong>Marla size</strong>, unit import aur status (Available / Booked / Sold / Hold).</td></tr>
+          <tr><td class="name">Leads &amp; Pipeline</td><td>Naye customers ko capture karke stage-by-stage follow-up — kaun kahan atka hai saaf dikhta hai.</td></tr>
+          <tr><td class="name">Sales Agents &amp; Dealers</td><td>Agents/dealers register karke unki bookings aur commission ka hisaab.</td></tr>
+          <tr><td class="name">Quotations</td><td>Customer ko professional quote, ek click mein booking mein convert.</td></tr>
+          <tr><td class="name">Bookings + Payment Plans</td><td>Unit book karke installment plan (down-payment + schedule) set karna.</td></tr>
+          <tr><td class="name">Payments &amp; Collections</td><td>Receipts, due-date tracking, <strong>late fees</strong>, refunds, cancellation rules, aur customer ledger (har rupee ka hisaab).</td></tr>
+          <tr><td class="name">Accounting</td><td>Chart of Accounts, journal aur month-closing — income/expenses ka proper book.</td></tr>
+          <tr><td class="name">Documents &amp; Verification</td><td>CNIC upload, <strong>CNIC OCR</strong>, duplicate-check, expiry alerts, aur booking se pehle verification block (with logged override). Files encrypt hoke store hoti hain.</td></tr>
+          <tr><td class="name">Approvals (Maker-Checker)</td><td>Refund, discount, expense jaise bade decisions par — request ek kare, approve doosra kare.</td></tr>
+          <tr><td class="name">Users, Roles &amp; Permissions</td><td>Har staff ko sirf utna access — role-based, branch-wise.</td></tr>
+          <tr><td class="name">Construction &amp; Procurement</td><td>Contractors, phases, tasks, progress logs; requisitions, purchase orders, GRN aur stock.</td></tr>
+          <tr><td class="name">Expenses &amp; Vendors</td><td>Company ka kharcha, vendors + contracts/invoices, vendor ledger.</td></tr>
+          <tr><td class="name">Customer Portal</td><td>Customer khud apni booking, payments aur documents dekhta hai — baar-baar call ki zaroorat nahi.</td></tr>
+          <tr><td class="name">Reminders, Campaigns &amp; Notifications</td><td>Payment/document-expiry auto-reminders, SMS/WhatsApp/email templates, campaigns.</td></tr>
+          <tr><td class="name">Dashboard &amp; Reports</td><td>Sales, collections, dues, occupancy — real-time numbers + CSV/Excel export.</td></tr>
+          <tr><td class="name">Audit Log</td><td>Kisne kab kya badla — poora record (dispute ke waqt kaam aata hai).</td></tr>
+          <tr><td class="name">Ask-DeedOrbit Assistant</td><td>Seedha sawal poochein — jawab data se (permission ke andar).</td></tr>
+          <tr><td class="name">Security</td><td>Login par 2FA, session control, login-events log, encrypted secrets.</td></tr>
+          <tr><td class="name">Integrations</td><td>API keys + webhooks, aur documents par e-signatures.</td></tr>
+          <tr><td class="name">Platform Super Admin</td><td>Multiple companies ko service dene walon ke liye billing/control ek jagah.</td></tr>
+        </tbody>
+      </table>
+
+      <span class="kicker">Aam masle → DeedOrbit ka hal</span>
+      <table>
+        <thead>
+          <tr><th>Aaj ka dard</th><th></th><th>DeedOrbit ka hal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Excel files / bahi-khata alag-alag, figures milte nahi</td><td class="arrow">→</td><td>Ek hi jagah customer, unit, payment, accounts — hisaab hamesha match.</td></tr>
+          <tr><td>Kisko kitna dena hai, kaunsi file pending — pata nahi</td><td class="arrow">→</td><td>Due-date, reminders aur pending-verifications ki list khud saamne.</td></tr>
+          <tr><td>Ek CNIC se multiple bookings / fraud risk</td><td class="arrow">→</td><td>Duplicate CNIC + document flags, verification ke bagair booking block.</td></tr>
+          <tr><td>"Maine to paise diye the" — jhagda</td><td class="arrow">→</td><td>Har payment ki receipt + customer ledger + audit trail.</td></tr>
+          <tr><td>Manager ke bagair discount/refund ho jana</td><td class="arrow">→</td><td>Maker-checker approvals — bina authorize badlaav nahi.</td></tr>
+          <tr><td>Customer roz phone karta hai status poochne</td><td class="arrow">→</td><td>Customer Portal — customer khud dekh le.</td></tr>
+          <tr><td>Data leak / staff ka galat access</td><td class="arrow">→</td><td>Role + branch permissions, encrypted files, reveal/download audit.</td></tr>
+        </tbody>
+      </table>
+
+      <span class="kicker">Fayda (Bottom line)</span>
+      <div class="benefits">
+        <div class="benefit"><h4>Zyada recovery</h4><p>Due waqt par vasooli, late-fees auto.</p></div>
+        <div class="benefit"><h4>Kam fraud &amp; jhagda</h4><p>Verification + audit trail.</p></div>
+        <div class="benefit"><h4>Kam admin time</h4><p>Auto-reminders + reports.</p></div>
+        <div class="benefit"><h4>Real-time control</h4><p>Dashboard par live numbers.</p></div>
+        <div class="benefit"><h4>Customer trust</h4><p>Portal + receipts.</p></div>
+        <div class="benefit"><h4>Scale</h4><p>10 files ya 100 units — ek system.</p></div>
+      </div>
+
+      <div class="footer">
+        <span>DeedOrbit · Feature Sheet</span>
+        <span>Page 1 of 2</span>
+      </div>
+
+      <!-- ============ PAGE 2 : MODULE-WISE DEMO FLOW ============ -->
+      <div class="page-break"></div>
+
+      <h2 class="section">Module-wise Demo Flow</h2>
+      <p style="color: var(--muted)">
+        Ek bilkul naye tenant par chal-te hue ka step-by-step rasta. Demo ke
+        liye naya workspace sign-up se banayein.
+      </p>
+
+      <ol class="flow">
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Account / Login</span></div>
+          <ul>
+            <li><strong>deedorbit.vercel.app</strong> par <strong>Create workspace</strong> se naya tenant (aap <strong>Tenant Owner</strong> ban jate ho), ya <strong>Sign in</strong>.</li>
+            <li>Pehli baar 2FA on kar sakte ho (Settings → Security).</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Pehla Project &amp; Units</span></div>
+          <ul>
+            <li>Projects → <strong>New Project</strong> (naam, location).</li>
+            <li>Project khol kar <strong>Structure</strong> mein blocks/phases.</li>
+            <li><strong>Inventory / Units</strong> → units add (ya CSV import): type, <strong>Marla size</strong>, price, <strong>Status</strong>.</li>
+          </ul>
+          <div class="note">Available status hi agla gate hai — sirf available unit book hota hai.</div>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Lead → Customer</span></div>
+          <ul>
+            <li>Leads → <strong>New Lead</strong> (naam, phone, source).</li>
+            <li>Pipeline stage move karein (Contacted → Interested → …) jab tak <strong>Converted</strong> — conversion se Customer profile ban jata hai.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Quotation → Booking</span></div>
+          <ul>
+            <li>Quotations → customer → unit select → price/discount → <strong>Save / Issue</strong>.</li>
+            <li>Quote se <strong>Create Booking</strong> → <strong>Payment Plan</strong>: total, down-payment, installments, due dates.</li>
+            <li>Booking confirm hone par unit <strong>Booked</strong> ho jata hai.</li>
+          </ul>
+          <div class="note">Agar documents pending hon to booking ruk sakti hai — dekhhein step 6.</div>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Payments &amp; Collections</span></div>
+          <ul>
+            <li>Booking khol kar <strong>Record Payment</strong> (amount, mode, date).</li>
+            <li>System <strong>Receipt</strong> + customer <strong>Ledger</strong> entry banata hai — Paid / Outstanding khud update.</li>
+            <li>Due nikal gayi to <strong>Late Fees</strong> rule ke hisaab se (Settings → Late Fees / Cancellation).</li>
+            <li><strong>Collections</strong> screen par saare dues, CSV export ke saath.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Refund / Cancellation (Approval ke saath)</span></div>
+          <ul>
+            <li>Refunds ya Transfers/Cancellation request banayein.</li>
+            <li>Seedha apply nahi hota — <strong>Approvals</strong> mein jata hai.</li>
+            <li>Doosra authorized user Approve/Reject (reason ke saath) → ledger adjust.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Documents &amp; Verification (safety net)</span></div>
+          <ul>
+            <li>Documents → customer ke liye CNIC upload.</li>
+            <li>File encrypt hoti hai, <strong>CNIC OCR</strong> value nikalti hai, <strong>duplicate</strong> check hota hai.</li>
+            <li>Verification Queue → <strong>Verify</strong> / Reject.</li>
+            <li>Expiry alerts (60/30/7 din pehle) + auto reminders.</li>
+            <li>Emergency mein <strong>Override</strong> — jo <em>log</em> ho jata hai. Sensitive data masked; reveal/download par audit entry.</li>
+          </ul>
+          <div class="note"><span class="danger">Rule:</span> verify na hone tak booking block — fraud/ duplicate rokne ke liye.</div>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Customer Portal</span></div>
+          <ul>
+            <li>Booking screen se portal link bhejein → customer apni booking, payments, receipts, documents khud dekhta hai.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Construction &amp; Procurement</span></div>
+          <ul>
+            <li>Construction → contractors, phases, tasks, site progress logs.</li>
+            <li>Procurement → Material Requisition → <strong>Purchase Order</strong> → <strong>GRN</strong> → <strong>Stock</strong> (PO/expense approvals se jate hain).</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Expenses, Vendors &amp; Accounting</span></div>
+          <ul>
+            <li>Vendors + contracts/invoices; Expenses (attachments ke saath) → approval → vendor ledger + journal.</li>
+            <li>Chart of Accounts setup; transactions se Journal entries; Month-closing se period lock.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Reminders, Campaigns &amp; Notifications</span></div>
+          <ul>
+            <li>Communications → SMS/WhatsApp/email Templates; Campaigns; payment/document-expiry Reminders auto-scheduled.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Dashboard, Reports &amp; Assistant</span></div>
+          <ul>
+            <li>Dashboard = sales, collections, dues, occupancy ek nazar.</li>
+            <li>Reports = detailed numbers, CSV/Excel export · <strong>Ask-DeedOrbit</strong> = sawal ka jawab data se.</li>
+          </ul>
+        </li>
+
+        <li class="step">
+          <div class="step-head"><span class="step-no"></span><span class="step-title">Team &amp; Security</span></div>
+          <ul>
+            <li>Users → staff add; Roles/Permissions se har koi sirf apna kaam dekhe; branch-wise access.</li>
+            <li>Audit Log = sab changes ki history.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="footer">
+        <span>DeedOrbit · https://deedorbit.vercel.app</span>
+        <span>Page 2 of 2</span>
+      </div>
+    </div>
+  </body>
+</html>
