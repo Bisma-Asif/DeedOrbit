@@ -1,8 +1,15 @@
 import { Check } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
+import { useMarketingMedia } from "@/features/marketing/media-config"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { LandingIcon } from "@/features/marketing/icons"
+
 import { ImageSlot } from "@/features/marketing/media-slot"
+
 import {
   Container,
   Eyebrow,
@@ -10,10 +17,14 @@ import {
   Section,
   SectionHeading,
 } from "@/features/marketing/ui"
+
 import { cn } from "@/lib/utils"
 
 export function Features() {
   const { t } = useMarketingLang()
+
+  const media = useMarketingMedia()
+
   const f = content.features
 
   return (
@@ -76,22 +87,52 @@ export function Features() {
                     ))}
                   </ul>
                 </div>
-                <div className={cn("lg:order-none", index % 2 === 1 && "lg:order-1")}>
+                <div
+                  className={cn(
+                    "lg:order-none",
+                    index % 2 === 1 && "lg:order-1",
+                  )}
+                >
                   <div className="overflow-hidden rounded-2xl border border-slate-900/10 bg-white p-2 shadow-raised">
                     <div className="flex items-center gap-1.5 px-2 py-1.5">
                       <span className="size-2.5 rounded-full bg-slate-300" />
                       <span className="size-2.5 rounded-full bg-slate-300" />
                       <span className="size-2.5 rounded-full bg-slate-300" />
                     </div>
-                    <div className="overflow-hidden rounded-xl">
-                      <ImageSlot
-                        src=""
-                        alt={t(showcase.title)}
-                        label={`Screenshot slot: ${showcase.screenshotSlot}`}
-                        width={1280}
-                        height={800}
-                      />
-                    </div>
+                    {index === 0 ? (
+                      <div className="grid aspect-[16/10] grid-cols-5 grid-rows-2 gap-1 overflow-hidden rounded-xl">
+                        <ImageSlot
+                          src={media.features.facade}
+                          alt="Modern building facade"
+                          width={1280}
+                          height={800}
+                          className="col-span-3 row-span-2"
+                        />
+                        <ImageSlot
+                          src={media.features.blueprints}
+                          alt="Architectural blueprints on a desk"
+                          width={1280}
+                          height={800}
+                          className="col-span-2"
+                        />
+                        <ImageSlot
+                          src={media.features.keys}
+                          alt="House keys and a miniature home"
+                          width={1280}
+                          height={800}
+                          className="col-span-2"
+                        />
+                      </div>
+                    ) : (
+                      <div className="overflow-hidden rounded-xl">
+                        <ImageSlot
+                          src={media.features.keys}
+                          alt="House keys and a miniature home"
+                          width={1280}
+                          height={800}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

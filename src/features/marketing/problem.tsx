@@ -1,7 +1,11 @@
 import { Check } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { LandingIcon } from "@/features/marketing/icons"
+
 import {
   Container,
   Eyebrow,
@@ -12,6 +16,7 @@ import {
 
 export function ProblemSolution() {
   const { t } = useMarketingLang()
+
   const p = content.problem
 
   return (
@@ -59,7 +64,9 @@ export function ProblemSolution() {
                     <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-white">
                       <Check size={15} strokeWidth={2.5} />
                     </span>
-                    <span className="text-[15px] text-slate-100">{t(point)}</span>
+                    <span className="text-[15px] text-slate-100">
+                      {t(point)}
+                    </span>
                   </li>
                 ))}
               </ul>

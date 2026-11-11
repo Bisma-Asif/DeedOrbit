@@ -19,6 +19,26 @@ import { formatCurrencyCompact, formatNumber } from "@/lib/format"
 
 import type { InventoryCategoryGroup } from "@/lib/inventory-categories-api"
 
+function categoryImage(group: InventoryCategoryGroup): string | null {
+  const category = `${group.key ?? ""} ${group.label}`
+    .toLowerCase()
+    .replaceAll("_", " ")
+
+  if (/\b(plot|land)\b/.test(category)) {
+    return "/media/virender-singh-Zi7xTWDoiic-unsplash.jpg"
+  }
+
+  if (/\b(apartment|flat|studio|penthouse|duplex)\b/.test(category)) {
+    return "/media/webaliser-_TPTXZd9mOo-unsplash.jpg"
+  }
+
+  if (/\b(house|villa|bungalow|farmhouse)\b/.test(category)) {
+    return "/media/salman-saqib-WaC-JFfF21M-unsplash.jpg"
+  }
+
+  return null
+}
+
 interface UnitCategoryCardsProps {
   /** Per property type, over the units currently listed. Largest first. */
 
@@ -73,6 +93,7 @@ export function UnitCategoryCards({
       <div className="flex gap-2 overflow-x-auto pb-1">
         {groups.map((group) => {
           const selected = selectedKey === group.key
+          const image = categoryImage(group)
 
           return (
             <button
@@ -80,50 +101,62 @@ export function UnitCategoryCards({
               type="button"
               aria-pressed={selected}
               onClick={() => onSelect(selected ? "" : (group.key ?? ""))}
-              className={`w-40 shrink-0 rounded-md border px-2.5 py-2 text-left transition-colors ${
+              className={`w-40 shrink-0 overflow-hidden rounded-md border p-0 text-left transition-colors ${
                 selected
                   ? "border-emerald-500/50 bg-emerald-500/8"
                   : "border-border bg-muted/20 hover:border-foreground/20 hover:bg-muted/30"
               }`}
             >
-              <p className="truncate text-[12.5px] font-medium text-foreground">
-                {group.label}
-              </p>
-
-              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                {formatNumber(group.total)}{" "}
-                {group.total === 1 ? "unit" : "units"} ·{" "}
-                <span className="text-emerald-700">
-                  {formatNumber(group.available)} open
-                </span>
-              </p>
-
-              <p className="mt-0.5 text-[11px] tabular-nums text-muted-foreground">
-                {group.value > 0
-                  ? formatCurrencyCompact(group.value, currency)
-                  : "—"}
-              </p>
-
-              {group.subtypes.length > 0 ? (
-                <p
-                  className="mt-1 truncate text-[10.5px] text-muted-foreground"
-                  title={group.subtypes
-
-                    .slice(0, 4)
-
-                    .map((subtype) => `${subtype.label} ${subtype.count}`)
-
-                    .join(", ")}
-                >
-                  {group.subtypes
-
-                    .slice(0, 3)
-
-                    .map((subtype) => `${subtype.label} ${subtype.count}`)
-
-                    .join(" · ")}
-                </p>
+              {image ? (
+                <img
+                  src={image}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="h-20 w-full object-cover"
+                />
               ) : null}
+
+              <div className="px-2.5 py-2">
+                <p className="truncate text-[12.5px] font-medium text-foreground">
+                  {group.label}
+                </p>
+
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  {formatNumber(group.total)}{" "}
+                  {group.total === 1 ? "unit" : "units"} ·{" "}
+                  <span className="text-emerald-700">
+                    {formatNumber(group.available)} open
+                  </span>
+                </p>
+
+                <p className="mt-0.5 text-[11px] tabular-nums text-muted-foreground">
+                  {group.value > 0
+                    ? formatCurrencyCompact(group.value, currency)
+                    : "—"}
+                </p>
+
+                {group.subtypes.length > 0 ? (
+                  <p
+                    className="mt-1 truncate text-[10.5px] text-muted-foreground"
+                    title={group.subtypes
+
+                      .slice(0, 4)
+
+                      .map((subtype) => `${subtype.label} ${subtype.count}`)
+
+                      .join(", ")}
+                  >
+                    {group.subtypes
+
+                      .slice(0, 3)
+
+                      .map((subtype) => `${subtype.label} ${subtype.count}`)
+
+                      .join(" · ")}
+                  </p>
+                ) : null}
+              </div>
             </button>
           )
         })}

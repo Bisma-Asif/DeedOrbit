@@ -1,7 +1,11 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { MarketingButton } from "@/features/marketing/button"
+
 import { Container } from "@/features/marketing/ui"
+
 import { navigate } from "@/lib/router"
 
 interface CtaBandProps {
@@ -10,6 +14,7 @@ interface CtaBandProps {
 
 export function CtaBand({ onBookDemo }: CtaBandProps) {
   const { t } = useMarketingLang()
+
   const c = content.ctaBand
 
   return (

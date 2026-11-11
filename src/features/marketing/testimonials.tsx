@@ -1,10 +1,20 @@
 import { content, type Localized } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
-import { Container, Eyebrow, Reveal, Section, SectionHeading } from "@/features/marketing/ui"
+
+import {
+  Container,
+  Eyebrow,
+  Reveal,
+  Section,
+  SectionHeading,
+} from "@/features/marketing/ui"
 
 interface TestimonialItem {
   author: string
+
   role: string
+
   quote: Localized
 }
 
@@ -13,13 +23,20 @@ interface TestimonialItem {
  * permissioned quotes exist. While hidden, the section prints nothing rather than
  * fabricating a review — the honesty rule from the brief.
  */
+
 export function Testimonials() {
   const { t } = useMarketingLang()
+
   const s = content.testimonials
+
   // Widen the `as const` literals so the render path below stays reachable once the
+
   // owner flips `show` and fills `items`.
+
   const show: boolean = s.show
+
   const items: readonly TestimonialItem[] = s.items
+
   if (!show || items.length === 0) return null
 
   return (
@@ -39,7 +56,9 @@ export function Testimonials() {
                   “{t(item.quote)}”
                 </blockquote>
                 <figcaption className="mt-4 text-[13px] text-muted-foreground">
-                  <span className="font-semibold text-foreground">{item.author}</span>
+                  <span className="font-semibold text-foreground">
+                    {item.author}
+                  </span>
                   {" — "}
                   {item.role}
                 </figcaption>

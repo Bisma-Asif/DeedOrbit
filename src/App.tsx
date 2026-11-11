@@ -40,6 +40,7 @@ import { NotificationsPage } from "@/features/notifications/notifications-page"
 import { NotificationSettingsPage } from "@/features/notifications/notification-settings-page"
 import { PlatformTenantsPage } from "@/features/platform/platform-tenants-page"
 import { PlatformTenantDetailPage } from "@/features/platform/platform-tenant-detail-page"
+import MediaReviewPage from "@/features/platform/media-review-page"
 import { PortalShell } from "@/features/portal/portal-shell"
 import { PortalRouter } from "@/features/portal/portal-router"
 import { LoginPage } from "@/features/auth/login-page"
@@ -295,6 +296,35 @@ export default function App() {
       <PortalShell session={data} path={path} onSignOut={handleSignOut}>
         <PortalRouter path={path} />
       </PortalShell>
+    )
+  }
+
+  if (path === "/admin/media-review") {
+    if (!isPlatformOperator) {
+      return (
+        <AppShell
+          session={data}
+          path={path}
+          canView={canView}
+          onSwitchTenant={handleSwitchTenant}
+          onSignOut={handleSignOut}
+        >
+          <NotFoundPage />
+        </AppShell>
+      )
+    }
+
+    return (
+      <AppShell
+        session={data}
+        path={path}
+        canView={canView}
+        onSwitchTenant={handleSwitchTenant}
+        onSignOut={handleSignOut}
+        platform
+      >
+        <MediaReviewPage />
+      </AppShell>
     )
   }
 

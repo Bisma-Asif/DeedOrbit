@@ -1,5 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react"
+
 import { cn } from "@/lib/utils"
+
 import {
   useParallax,
   usePrefersReducedMotion,
@@ -17,61 +19,90 @@ import {
 
 interface BuildingSceneProps {
   /** Resolved labels for the orbiting cards, e.g. ["Unit Booked", …]. */
+
   cards: string[]
+
   className?: string
 }
 
 const SLATE_FRONT = "linear-gradient(180deg,#1e293b,#0f172a)"
+
 const SLATE_SIDE = "linear-gradient(180deg,#0b1220,#0f172a)"
+
 const STONE_FRONT = "linear-gradient(180deg,#efe9dd,#ded6c7)"
+
 const STONE_SIDE = "linear-gradient(180deg,#d9d2c5,#c8bfad)"
+
 const WINDOW_PATTERN =
   "repeating-linear-gradient(0deg,transparent 0 9px,rgba(16,185,129,0.22) 9px 11px)," +
   "repeating-linear-gradient(90deg,transparent 0 8px,rgba(16,185,129,0.18) 8px 10px)"
 
 function faceStyle(
   transform: string,
+
   background: string,
+
   width: number,
+
   height: number,
 ): CSSProperties {
   return {
     position: "absolute",
+
     width,
+
     height,
+
     transform,
+
     background,
+
     backfaceVisibility: "visible",
+
     border: "1px solid rgba(148,163,184,0.10)",
   }
 }
 
 function Box({
   width,
+
   height,
+
   depth,
+
   front,
+
   side,
+
   top,
+
   windows,
+
   style,
 }: {
   width: number
+
   height: number
+
   depth: number
+
   front: string
+
   side: string
+
   top: string
+
   windows?: boolean
+
   style?: CSSProperties
 }) {
   const win = windows ? `${WINDOW_PATTERN},` : ""
+
   return (
     <div className="mk-3d" style={{ position: "absolute", ...style }}>
-      <div style={faceStyle(`translateZ(${depth / 2}px)`, win + front, width, height)} />
       <div
         style={faceStyle(
-          `rotateY(180deg) translateZ(${depth / 2}px)`,
+          `translateZ(${depth / 2}px)`,
           win + front,
           width,
           height,
@@ -79,25 +110,45 @@ function Box({
       />
       <div
         style={faceStyle(
+          `rotateY(180deg) translateZ(${depth / 2}px)`,
+
+          win + front,
+
+          width,
+
+          height,
+        )}
+      />
+      <div
+        style={faceStyle(
           `rotateY(90deg) translateZ(${width / 2}px)`,
+
           win + side,
+
           depth,
+
           height,
         )}
       />
       <div
         style={faceStyle(
           `rotateY(-90deg) translateZ(${width / 2}px)`,
+
           win + side,
+
           depth,
+
           height,
         )}
       />
       <div
         style={faceStyle(
           `rotateX(90deg) translateZ(${height / 2}px)`,
+
           top,
+
           width,
+
           depth,
         )}
       />
@@ -120,9 +171,23 @@ function StaticIllustration({ cards }: { cards: string[] }) {
             <stop offset="1" stopColor="#0f172a" />
           </linearGradient>
         </defs>
-        <ellipse cx="130" cy="196" rx="96" ry="16" fill="#0f172a" opacity="0.12" />
+        <ellipse
+          cx="130"
+          cy="196"
+          rx="96"
+          ry="16"
+          fill="#0f172a"
+          opacity="0.12"
+        />
         <rect x="150" y="120" width="58" height="76" rx="3" fill="#d9d2c5" />
-        <rect x="96" y="52" width="70" height="144" rx="4" fill="url(#mk-tower)" />
+        <rect
+          x="96"
+          y="52"
+          width="70"
+          height="144"
+          rx="4"
+          fill="url(#mk-tower)"
+        />
         {Array.from({ length: 24 }).map((_, i) => (
           <rect
             key={i}
@@ -163,18 +228,25 @@ function StaticIllustration({ cards }: { cards: string[] }) {
 
 export function BuildingScene({ cards, className }: BuildingSceneProps) {
   const reduced = usePrefersReducedMotion()
+
   const [staticMode, setStaticMode] = useState(true)
+
   const parallax = useParallax(!staticMode)
 
   // Decide once on mount whether the animated scene is appropriate.
+
   useEffect(() => {
     if (reduced) {
       setStaticMode(true)
+
       return
     }
+
     let webgl = false
+
     try {
       const canvas = document.createElement("canvas")
+
       webgl = !!(
         window.WebGLRenderingContext &&
         (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
@@ -182,12 +254,17 @@ export function BuildingScene({ cards, className }: BuildingSceneProps) {
     } catch {
       webgl = false
     }
+
     const coarse =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(pointer: coarse)").matches
+
     const small = window.innerWidth < 640
+
     // CSS 3D does not require WebGL, but a device without it (or a small
+
     // touch phone) is exactly the "low power" signal to keep static.
+
     setStaticMode(!webgl || (coarse && small))
   }, [reduced])
 
@@ -201,10 +278,17 @@ export function BuildingScene({ cards, className }: BuildingSceneProps) {
 
   const tilt = `rotateX(${(-parallax.y * 8).toFixed(2)}deg) rotateY(${(
     parallax.x * 10
-  ).toFixed(2)}deg)`
+  )
+
+    .toFixed(2)}deg)`
 
   return (
-    <div className={cn("mk-persp relative mx-auto aspect-square w-full max-w-[440px]", className)}>
+    <div
+      className={cn(
+        "mk-persp relative mx-auto aspect-square w-full max-w-[440px]",
+        className,
+      )}
+    >
       {/* Emerald halo behind the tower. */}
       <div
         aria-hidden
@@ -218,7 +302,10 @@ export function BuildingScene({ cards, className }: BuildingSceneProps) {
         className="absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-out"
         style={{ transform: tilt }}
       >
-        <div className="mk-3d mk-anim-orbit relative" style={{ transform: "rotateX(-16deg)" }}>
+        <div
+          className="mk-3d mk-anim-orbit relative"
+          style={{ transform: "rotateX(-16deg)" }}
+        >
           {/* Podium (stone) + tower (slate), sharing one rotating origin. */}
           <Box
             width={130}
@@ -267,15 +354,20 @@ export function BuildingScene({ cards, className }: BuildingSceneProps) {
         {/* Floating status chips — kept upright, gently bobbing, on the ring. */}
         {cards.map((label, index) => {
           const angle = (index / cards.length) * Math.PI * 2
+
           const radius = 178
+
           const x = Math.cos(angle) * radius
+
           const y = Math.sin(angle) * radius * 0.5
+
           return (
             <div
               key={label}
               className="mk-anim-bob absolute left-1/2 top-1/2"
               style={{
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+
                 animationDelay: `${index * 0.5}s`,
               }}
             >

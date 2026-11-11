@@ -1,6 +1,13 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
-import { Container, SECTION_IDS, scrollToSection } from "@/features/marketing/ui"
+
+import {
+  Container,
+  SECTION_IDS,
+  scrollToSection,
+} from "@/features/marketing/ui"
+
 import { navigate } from "@/lib/router"
 
 interface FooterProps {
@@ -9,23 +16,34 @@ interface FooterProps {
 
 export function Footer({ onBookDemo }: FooterProps) {
   const { t } = useMarketingLang()
+
   const f = content.footer
+
   const c = content.contact
+
   const year = new Date().getFullYear()
 
   // lucide-react ships no brand glyphs, so socials render as small monogram links
+
   // and only appear once the owner fills a URL in content.ts.
+
   const socialLinks = [
     { key: "linkedin", label: "LinkedIn", href: c.social.linkedin },
+
     { key: "facebook", label: "Facebook", href: c.social.facebook },
+
     { key: "x", label: "X", href: c.social.x },
+
     { key: "youtube", label: "YouTube", href: c.social.youtube },
   ].filter((s) => Boolean(s.href))
 
   const productTargets = [
     SECTION_IDS.features,
+
     SECTION_IDS.how,
+
     SECTION_IDS.pricing,
+
     null, // "Sign in"
   ]
 
@@ -59,6 +77,7 @@ export function Footer({ onBookDemo }: FooterProps) {
                     type="button"
                     onClick={() => {
                       const target = productTargets[index]
+
                       if (target) scrollToSection(target)
                       else navigate("/login")
                     }}
@@ -159,6 +178,14 @@ export function Footer({ onBookDemo }: FooterProps) {
             © {year} {content.site.name}. {t(f.madeIn)}.
           </p>
           <p>{t(c.address)}</p>
+          <a
+            href="https://www.pexels.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-white"
+          >
+            Photos and videos by Pexels contributors
+          </a>
         </div>
       </Container>
     </footer>

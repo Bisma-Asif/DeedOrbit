@@ -1,44 +1,69 @@
 import { useEffect, useRef, useState, type Ref } from "react"
+
 import { Check, X } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { MarketingButton } from "@/features/marketing/button"
+
 import { api } from "@/lib/api"
 
 interface DemoModalProps {
   open: boolean
+
   onClose: () => void
 }
 
 interface DemoForm {
   name: string
+
   company: string
+
   email: string
+
   phone: string
+
   projects: string
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const EMPTY: DemoForm = { name: "", company: "", email: "", phone: "", projects: "" }
+const EMPTY: DemoForm = {
+  name: "",
+  company: "",
+  email: "",
+  phone: "",
+  projects: "",
+}
 
 type Status = "idle" | "sending" | "success" | "error"
 
 export function DemoModal({ open, onClose }: DemoModalProps) {
   const { t } = useMarketingLang()
+
   const d = content.demo
+
   const [form, setForm] = useState<DemoForm>(EMPTY)
+
   const [status, setStatus] = useState<Status>("idle")
+
   const [fieldError, setFieldError] = useState<string | null>(null)
+
   const firstFieldRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (!open) return
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
     }
+
     document.addEventListener("keydown", onKey)
+
     firstFieldRef.current?.focus()
+
     return () => document.removeEventListener("keydown", onKey)
   }, [open, onClose])
 
@@ -46,28 +71,40 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 
   const update = (key: keyof DemoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
+
     if (status === "error") setStatus("idle")
   }
 
   const submit = async () => {
     setFieldError(null)
+
     if (!form.name.trim() || !form.company.trim()) {
       setFieldError(t(d.fields.name))
+
       return
     }
+
     if (!EMAIL_PATTERN.test(form.email)) {
       setFieldError(t(d.fields.email))
+
       return
     }
+
     setStatus("sending")
+
     try {
       await api.post("/api/demo-requests", {
         name: form.name.trim(),
+
         company: form.company.trim(),
+
         email: form.email.trim(),
+
         phone: form.phone.trim(),
+
         projects: form.projects.trim(),
       })
+
       setStatus("success")
     } catch {
       setStatus("error")
@@ -179,13 +216,23 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 
 interface FieldProps {
   label: string
+
   value: string
+
   onChange: (value: string) => void
+
   type?: string
+
   inputRef?: Ref<HTMLInputElement>
 }
 
-function Field({ label, value, onChange, type = "text", inputRef }: FieldProps) {
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+  inputRef,
+}: FieldProps) {
   return (
     <label className="block">
       <span className="text-[13px] font-medium text-foreground">{label}</span>

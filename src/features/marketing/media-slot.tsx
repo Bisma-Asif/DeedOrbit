@@ -1,33 +1,54 @@
 import { useState } from "react"
-import { ImageOff } from "lucide-react"
+
 import { cn } from "@/lib/utils"
 
-/**
- * A single media slot used across the landing page. It renders the real image
- * from `src` when the owner has uploaded it; if the file is missing (the default
- * until upload) it falls back to a neutral, clearly-labelled placeholder so the
- * layout never shows a broken image. No hotlinked stock art — just a labelled box.
- */
+/** Local media rendering with responsive derivatives and a non-broken fallback. */
 
 interface ImageSlotProps {
   src: string
+
   alt: string
+
   label?: string
+
   className?: string
+
   imgClassName?: string
+
   width: number
+
   height: number
+
   eager?: boolean
+}
+
+function responsiveSource(src: string, format: "webp" | "avif") {
+  const match = /^(.*)\.(?:jpe?g|png)(\?.*)?$/i.exec(src)
+
+  if (!match) return undefined
+
+  const query = match[2] ?? ""
+
+  return [800, 1600]
+
+    .map((size) => `${match[1]}-${size}.${format}${query} ${size}w`)
+
+    .join(", ")
 }
 
 export function ImageSlot({
   src,
+
   alt,
-  label,
+
   className,
+
   imgClassName,
+
   width,
+
   height,
+
   eager = false,
 }: ImageSlotProps) {
   const [failed, setFailed] = useState(false)
@@ -39,69 +60,94 @@ export function ImageSlot({
         aria-label={alt}
         className={cn(
           "flex items-center justify-center bg-sand-deep/60 text-slate-500",
+
           className,
         )}
         style={{ aspectRatio: `${width} / ${height}` }}
-      >
-        <div className="flex flex-col items-center gap-1.5 px-4 text-center">
-          <ImageOff size={22} strokeWidth={1.5} />
-          <span className="text-[12px] font-medium">
-            {label ?? "Image placeholder"}
-          </span>
-        </div>
-      </div>
+      />
     )
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={eager ? "eager" : "lazy"}
-      decoding="async"
-      onError={() => setFailed(true)}
-      className={cn("h-full w-full object-cover", imgClassName, className)}
-    />
+    <picture className={cn("block h-full w-full", className)}>
+      <source
+        type="image/avif"
+        srcSet={responsiveSource(src, "avif")}
+        sizes="(max-width: 640px) 100vw, 800px"
+      />
+      <source
+        type="image/webp"
+        srcSet={responsiveSource(src, "webp")}
+        sizes="(max-width: 640px) 100vw, 800px"
+      />
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        onError={() => setFailed(true)}
+        className={cn("h-full w-full object-cover", imgClassName)}
+      />
+    </picture>
   )
 }
 
 interface VideoClipProps {
   src: string
+
+  webm?: string
+
   poster: string
+
   label?: string
+
   className?: string
 }
 
-/**
- * A short gallery clip. Renders a looping muted video when a clip path is set and
- * loads; otherwise a placeholder note so a missing clip never breaks the tile.
- */
-export function VideoClip({ src, poster, label, className }: VideoClipProps) {
+/** A muted local gallery clip that falls back to its locally stored poster. */
+
+export function VideoClip({
+  src,
+
+  webm,
+
+  poster,
+
+  label,
+
+  className,
+}: VideoClipProps) {
   const [failed, setFailed] = useState(false)
+
   if (!src || failed) {
     return (
-      <div
-        className={cn(
-          "flex items-center justify-center bg-slate-800 text-[12px] text-slate-300",
-          className,
-        )}
-      >
-        {label ?? "Video placeholder"}
-      </div>
+      <img
+        src={poster}
+        alt={label ?? ""}
+        width={1280}
+        height={800}
+        loading="lazy"
+        decoding="async"
+        className={cn("h-full w-full object-cover", className)}
+      />
     )
   }
+
   return (
     <video
       className={cn("h-full w-full object-cover", className)}
-      src={src}
       poster={poster}
       autoPlay
       muted
       loop
       playsInline
+      preload="metadata"
       onError={() => setFailed(true)}
-    />
+    >
+      {webm ? <source src={webm} type="video/webm" /> : null}
+      <source src={src} type="video/mp4" />
+    </video>
   )
 }

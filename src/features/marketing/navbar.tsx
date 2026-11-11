@@ -1,15 +1,25 @@
 import { useEffect, useRef, useState } from "react"
+
 import { ChevronDown, Menu, X } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { useScrolled } from "@/features/marketing/hooks"
+
 import { SECTION_IDS, scrollToSection } from "@/features/marketing/ui"
+
 import { MarketingButton } from "@/features/marketing/button"
+
 import { navigate } from "@/lib/router"
+
 import { useSession } from "@/lib/session-context"
+
 import { cn } from "@/lib/utils"
 
 /** The DeedOrbit wordmark: an emerald orbit dot set beside the serif name. */
+
 function Wordmark({ dark }: { dark: boolean }) {
   return (
     <button
@@ -25,6 +35,7 @@ function Wordmark({ dark }: { dark: boolean }) {
       <span
         className={cn(
           "font-display text-[20px] font-semibold tracking-tight",
+
           dark ? "text-white" : "text-foreground",
         )}
       >
@@ -36,45 +47,61 @@ function Wordmark({ dark }: { dark: boolean }) {
 
 export function Navbar() {
   const { t, lang, toggle } = useMarketingLang()
+
   const scrolled = useScrolled(12)
+
   const { data, signOut } = useSession()
+
   const [mobileOpen, setMobileOpen] = useState(false)
+
   const [menuOpen, setMenuOpen] = useState(false)
+
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   // Hero is dark, so at the very top the bar is transparent with light text; once
+
   // scrolled it becomes a solid off-white sheet with a hairline border.
+
   const onDark = !scrolled && !mobileOpen
 
   useEffect(() => {
     if (!menuOpen) return
+
     const onClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node))
         setMenuOpen(false)
     }
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuOpen(false)
     }
+
     document.addEventListener("mousedown", onClick)
+
     document.addEventListener("keydown", onKey)
+
     return () => {
       document.removeEventListener("mousedown", onClick)
+
       document.removeEventListener("keydown", onKey)
     }
   }, [menuOpen])
 
   const goSection = (id: string) => {
     setMobileOpen(false)
+
     scrollToSection(id)
   }
 
   const links = content.nav.links
+
   const signedIn = Boolean(data)
 
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+
         onDark
           ? "bg-transparent"
           : "border-b border-border/70 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70",
@@ -88,9 +115,14 @@ export function Navbar() {
             <button
               key={link.id}
               type="button"
-              onClick={() => goSection(SECTION_IDS[link.id as keyof typeof SECTION_IDS] ?? link.id)}
+              onClick={() =>
+                goSection(
+                  SECTION_IDS[(link.id as keyof typeof SECTION_IDS)] ?? link.id,
+                )
+              }
               className={cn(
                 "rounded-md px-3 py-2 text-[14px] font-medium transition-colors",
+
                 onDark
                   ? "text-white/80 hover:text-white hover:bg-white/10"
                   : "text-foreground/70 hover:text-foreground hover:bg-black/5",
@@ -108,6 +140,7 @@ export function Navbar() {
             aria-label="Switch language"
             className={cn(
               "hidden rounded-md px-2.5 py-1.5 text-[13px] font-semibold transition-colors sm:inline-flex",
+
               onDark
                 ? "text-white/80 hover:text-white hover:bg-white/10"
                 : "text-foreground/70 hover:text-foreground hover:bg-black/5",
@@ -133,6 +166,7 @@ export function Navbar() {
                   aria-haspopup="menu"
                   className={cn(
                     "flex items-center gap-1.5 rounded-lg px-3 py-2 text-[14px] font-medium transition-colors",
+
                     onDark
                       ? "text-white/85 hover:bg-white/10"
                       : "text-foreground/75 hover:bg-black/5",
@@ -153,7 +187,9 @@ export function Navbar() {
                       type="button"
                       onClick={() => {
                         setMenuOpen(false)
+
                         void signOut()
+
                         navigate("/")
                       }}
                       className="flex w-full items-center rounded-lg px-3 py-2 text-start text-[14px] text-foreground hover:bg-muted"
@@ -185,6 +221,7 @@ export function Navbar() {
             aria-expanded={mobileOpen}
             className={cn(
               "inline-flex size-10 items-center justify-center rounded-lg transition-colors lg:hidden",
+
               onDark
                 ? "text-white hover:bg-white/10"
                 : "text-foreground hover:bg-black/5",
@@ -203,7 +240,10 @@ export function Navbar() {
                 key={link.id}
                 type="button"
                 onClick={() =>
-                  goSection(SECTION_IDS[link.id as keyof typeof SECTION_IDS] ?? link.id)
+                  goSection(
+                    SECTION_IDS[(link.id as keyof typeof SECTION_IDS)] ??
+                      link.id,
+                  )
                 }
                 className="rounded-lg px-3 py-2.5 text-start text-[15px] font-medium text-foreground hover:bg-muted"
               >
@@ -223,6 +263,7 @@ export function Navbar() {
                   <MarketingButton
                     onClick={() => {
                       setMobileOpen(false)
+
                       navigate("/dashboard")
                     }}
                     className="flex-1"
@@ -233,7 +274,9 @@ export function Navbar() {
                     variant="ghostLight"
                     onClick={() => {
                       setMobileOpen(false)
+
                       void signOut()
+
                       navigate("/")
                     }}
                   >
@@ -246,6 +289,7 @@ export function Navbar() {
                     variant="outlineLight"
                     onClick={() => {
                       setMobileOpen(false)
+
                       navigate("/login")
                     }}
                     className="flex-1"
@@ -255,6 +299,7 @@ export function Navbar() {
                   <MarketingButton
                     onClick={() => {
                       setMobileOpen(false)
+
                       navigate("/signup")
                     }}
                     className="flex-1"

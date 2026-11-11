@@ -1,10 +1,14 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { LandingIcon } from "@/features/marketing/icons"
+
 import { Container, Reveal } from "@/features/marketing/ui"
 
 export function TrustStrip() {
   const { t } = useMarketingLang()
+
   const s = content.trustStrip
 
   return (

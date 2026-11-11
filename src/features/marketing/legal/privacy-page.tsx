@@ -1,5 +1,7 @@
 import { content } from "@/features/marketing/content"
+
 import { LegalShell } from "@/features/marketing/legal/legal-shell"
+
 import { privacySections } from "@/features/marketing/legal/legal-content"
 
 export function PrivacyPage() {

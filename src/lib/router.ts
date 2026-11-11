@@ -12,7 +12,12 @@ function readPath(): string {
   // `App` decides whether that shows the pitch or, for a signed-in visitor, the
   // "Go to Dashboard" entry. Every in-app screen still uses an explicit hash, so
   // deep links like `#/dashboard` and `#/bookings/:id` are unaffected.
-  if (!raw) return "/"
+  if (!raw) {
+    if (window.location.pathname === "/admin/media-review") {
+      return "/admin/media-review"
+    }
+    return "/"
+  }
   return raw.startsWith("/") ? raw : `/${raw}`
 }
 

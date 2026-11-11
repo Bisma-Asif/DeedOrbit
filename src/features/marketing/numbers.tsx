@@ -1,11 +1,16 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { useCountUp, useReveal } from "@/features/marketing/hooks"
+
 import { Container, Eyebrow, Reveal, Section } from "@/features/marketing/ui"
 
 interface StatProps {
   value: string
+
   label: string
+
   active: boolean
 }
 
@@ -14,10 +19,14 @@ interface StatProps {
  * and renders non-numeric capabilities ("∞", "24/7") as-is. Reduced motion shows the
  * final value immediately.
  */
+
 function Stat({ value, label, active }: StatProps) {
   const match = /^(\d+)(.*)$/.exec(value)
+
   const target = match ? Number(match[1]) : null
+
   const suffix = match ? match[2] : ""
+
   const shown = useCountUp(target ?? 0, active && target !== null)
 
   return (
@@ -32,7 +41,9 @@ function Stat({ value, label, active }: StatProps) {
 
 export function Numbers() {
   const { t } = useMarketingLang()
+
   const n = content.numbers
+
   const { ref, visible } = useReveal({ threshold: 0.3 })
 
   return (

@@ -1,29 +1,54 @@
 import { useEffect, useState } from "react"
+
 import { X } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
+import { useMarketingMedia } from "@/features/marketing/media-config"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { ImageSlot, VideoClip } from "@/features/marketing/media-slot"
-import { Container, Eyebrow, Section, SectionHeading } from "@/features/marketing/ui"
+
+import {
+  Container,
+  Eyebrow,
+  Section,
+  SectionHeading,
+} from "@/features/marketing/ui"
 
 type GalleryKey = keyof typeof content.media.gallery
 
 interface ActiveItem {
   src: string
+
   clip: string
+
+  webm: string
+
+  poster: string
+
   label: string
 }
 
 export function Gallery() {
   const { t } = useMarketingLang()
+
+  const media = useMarketingMedia()
+
   const g = content.gallery
+
   const [active, setActive] = useState<ActiveItem | null>(null)
 
   useEffect(() => {
     if (!active) return
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActive(null)
     }
+
     document.addEventListener("keydown", onKey)
+
     return () => document.removeEventListener("keydown", onKey)
   }, [active])
 
@@ -47,11 +72,24 @@ export function Gallery() {
         <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:px-8 [scrollbar-width:thin]">
           {g.items.map((item) => {
             const key = item.key as GalleryKey
-            const src = content.media.gallery[key]
+
+            const src = media.gallery[key]
+
             const clip =
-              key in content.media.clips
-                ? content.media.clips[key as keyof typeof content.media.clips]
+              key in media.clips
+                ? media.clips[(key as keyof typeof media.clips)]
                 : ""
+
+            const webm =
+              key in media.clipWebm
+                ? media.clipWebm[(key as keyof typeof media.clipWebm)]
+                : ""
+
+            const poster =
+              key in media.clipPosters
+                ? media.clipPosters[(key as keyof typeof media.clipPosters)]
+                : src
+
             return (
               <li
                 key={item.key}
@@ -60,7 +98,7 @@ export function Gallery() {
                 <button
                   type="button"
                   onClick={() =>
-                    setActive({ src, clip, label: t(item.label) })
+                    setActive({ src, clip, webm, poster, label: t(item.label) })
                   }
                   className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-white text-start shadow-card"
                 >
@@ -109,7 +147,8 @@ export function Gallery() {
               {active.clip ? (
                 <VideoClip
                   src={active.clip}
-                  poster={active.src}
+                  webm={active.webm}
+                  poster={active.poster}
                   label={active.label}
                   className="h-full w-full"
                 />

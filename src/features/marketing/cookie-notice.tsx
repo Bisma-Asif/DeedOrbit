@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
+
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
 
 const DISMISS_KEY = "deedorbit.cookieNotice"
@@ -8,8 +10,10 @@ const DISMISS_KEY = "deedorbit.cookieNotice"
  * A slim cookie acknowledgement. The product sets only essential session cookies,
  * so the copy says exactly that; the notice hides permanently once dismissed.
  */
+
 export function CookieNotice() {
   const { t } = useMarketingLang()
+
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -24,6 +28,7 @@ export function CookieNotice() {
 
   const accept = () => {
     setVisible(false)
+
     try {
       window.localStorage.setItem(DISMISS_KEY, "1")
     } catch {

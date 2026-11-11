@@ -11,7 +11,7 @@ services:
   - type: web
     name: deedorbit-api
     runtime: docker
-    plan: free
+    plan: starter
     region: oregon
     dockerfilePath: ./Dockerfile
     envVars:
@@ -19,15 +19,19 @@ services:
         value: production
       - key: DEEDORBIT_DB
         value: /data/deedorbit.db
+      - key: MEDIA_DIR
+        value: /app/public/media
+      - key: MEDIA_FALLBACK_DIR
+        value: /app/static-media
+      - key: PEXELS_API_KEY
+        sync: false
       # A base64-encoded 32-byte key. Generate one with:
       #   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
       # `sync: false` makes Render ask for the value once at create time.
       - key: ENCRYPTION_KEY
         sync: false
-    # Persistence: attach a disk so real signups survive restarts. A disk
-    # requires a paid instance plan. On the free plan the SQLite file lives on
-    # ephemeral storage and the demo data simply re-seeds on each boot.
-    # disk:
-    #   name: deedorbit-data
-    #   mountPath: /data
-    #   sizeGB: 1
+    # The persistent disk stores the media config, optimized files, and SQLite DB.
+    disk:
+      name: deedorbit-data
+      mountPath: /data
+      sizeGB: 1

@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import { Building2, LockKeyhole, ShieldCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { brand } from "@/config/brand"
+import { useMarketingMedia } from "@/features/marketing/media-config"
 
 /**
  * Shared chrome for every unauthenticated screen: form on the left, navy
@@ -17,6 +18,7 @@ export function AuthLayout({
   aside?: ReactNode
   footerNote?: ReactNode
 }) {
+  const media = useMarketingMedia()
   return (
     <div className="grid min-h-dvh w-full bg-background lg:grid-cols-[minmax(420px,0.9fr)_1.1fr]">
       <section className="flex min-h-dvh flex-col border-border px-5 py-5 sm:px-8 lg:border-r lg:px-12">
@@ -42,8 +44,24 @@ export function AuthLayout({
         </div>
       </section>
 
-      <aside className="hidden min-h-dvh flex-col justify-between bg-nav px-10 py-8 text-nav-foreground lg:flex xl:px-14">
-        {aside ?? <DefaultAside />}
+      <aside className="relative hidden min-h-dvh flex-col justify-between overflow-hidden bg-nav px-10 py-8 text-nav-foreground lg:flex xl:px-14">
+        <img
+          src={media.loginSide}
+          alt=""
+          aria-hidden="true"
+          width={1600}
+          height={1000}
+          loading="lazy"
+          decoding="async"
+          onError={(event) => {
+            event.currentTarget.hidden = true
+          }}
+          className="absolute inset-0 h-full w-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-nav/80" />
+        <div className="relative z-10 flex min-h-dvh flex-col justify-between">
+          {aside ?? <DefaultAside />}
+        </div>
       </aside>
     </div>
   )

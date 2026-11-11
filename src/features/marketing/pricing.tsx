@@ -1,8 +1,13 @@
 import { useState } from "react"
+
 import { Check } from "lucide-react"
+
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { MarketingButton } from "@/features/marketing/button"
+
 import {
   Container,
   Eyebrow,
@@ -10,7 +15,9 @@ import {
   Section,
   SectionHeading,
 } from "@/features/marketing/ui"
+
 import { navigate } from "@/lib/router"
+
 import { cn } from "@/lib/utils"
 
 interface PricingProps {
@@ -25,7 +32,9 @@ function formatPKR(amount: number) {
 
 export function Pricing({ onBookDemo }: PricingProps) {
   const { t } = useMarketingLang()
+
   const p = content.pricing
+
   const [cycle, setCycle] = useState<Cycle>("monthly")
 
   return (
@@ -50,6 +59,7 @@ export function Pricing({ onBookDemo }: PricingProps) {
                 aria-pressed={cycle === option}
                 className={cn(
                   "rounded-full px-4 py-1.5 text-[14px] font-semibold transition-colors",
+
                   cycle === option
                     ? "bg-primary text-white"
                     : "text-foreground/70 hover:text-foreground",
@@ -67,12 +77,15 @@ export function Pricing({ onBookDemo }: PricingProps) {
         <div className="mt-10 grid gap-5 lg:grid-cols-4">
           {p.plans.map((plan, index) => {
             const popular = "popular" in plan && plan.popular === true
+
             const amount = cycle === "monthly" ? plan.monthly : plan.yearly
+
             return (
               <Reveal key={plan.id} delay={index * 70}>
                 <div
                   className={cn(
                     "relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-card",
+
                     popular
                       ? "border-primary shadow-raised lg:-mt-3 lg:mb-3"
                       : "border-slate-900/10",
@@ -103,7 +116,12 @@ export function Pricing({ onBookDemo }: PricingProps) {
                           </span>
                         </div>
                         <span className="text-[13px] text-muted-foreground">
-                          / {t(cycle === "monthly" ? p.toggleMonthly : p.toggleYearly).toLowerCase()}
+                          /{" "}
+                          {t(
+                            cycle === "monthly"
+                              ? p.toggleMonthly
+                              : p.toggleYearly,
+                          ).toLowerCase()}
                         </span>
                       </>
                     ) : (

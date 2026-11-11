@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from "react"
+
 import { cn } from "@/lib/utils"
+
 import { useReveal } from "@/features/marketing/hooks"
 
 /**
@@ -9,9 +11,13 @@ import { useReveal } from "@/features/marketing/hooks"
 
 export const SECTION_IDS = {
   features: "features",
+
   how: "how",
+
   pricing: "pricing",
+
   faq: "faq",
+
   contact: "contact",
 } as const
 
@@ -20,17 +26,22 @@ export const SECTION_IDS = {
  * the app's router owns the URL hash — a plain `#features` would be parsed as a
  * route. Reduced-motion visitors jump instantly instead of easing.
  */
+
 export function scrollToSection(id: string) {
   const el = document.getElementById(id)
+
   if (!el) return
+
   const reduce =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
   el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" })
 }
 
 interface ContainerProps {
   children: ReactNode
+
   className?: string
 }
 
@@ -44,22 +55,32 @@ export function Container({ children, className }: ContainerProps) {
 
 interface RevealProps {
   children: ReactNode
+
   className?: string
+
   delay?: number
+
   as?: "div" | "li"
 }
 
 /** Fade + rise on first scroll into view; static under reduced motion. */
+
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
   const { ref, visible } = useReveal()
-  const style: CSSProperties = { transitionDelay: visible ? `${delay}ms` : "0ms" }
+
+  const style: CSSProperties = {
+    transitionDelay: visible ? `${delay}ms` : "0ms",
+  }
+
   return (
     <div
       ref={ref}
       style={style}
       className={cn(
         "transition-all duration-700 ease-out motion-reduce:transition-none",
+
         visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
+
         className,
       )}
     >
@@ -70,18 +91,27 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
 
 interface SectionProps {
   children: ReactNode
+
   id?: string
+
   className?: string
+
   /** Visual band: light off-white, deep slate, or warm sand. */
+
   band?: "light" | "dark" | "sand"
+
   bleed?: boolean
 }
 
 export function Section({
   children,
+
   id,
+
   className,
+
   band = "light",
+
   bleed = false,
 }: SectionProps) {
   const bandClass =
@@ -90,12 +120,15 @@ export function Section({
       : band === "sand"
         ? "bg-sand text-sand-foreground"
         : "bg-background text-foreground"
+
   return (
     <section
       id={id}
       className={cn(
         "scroll-mt-20 py-16 sm:py-20 lg:py-24",
+
         bandClass,
+
         className,
       )}
     >
@@ -106,6 +139,7 @@ export function Section({
 
 interface EyebrowProps {
   children: ReactNode
+
   dark?: boolean
 }
 
@@ -114,12 +148,14 @@ export function Eyebrow({ children, dark = false }: EyebrowProps) {
     <span
       className={cn(
         "inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] uppercase",
+
         dark ? "text-emerald-300" : "text-primary",
       )}
     >
       <span
         className={cn(
           "h-px w-6",
+
           dark ? "bg-emerald-300/60" : "bg-primary/50",
         )}
       />
@@ -130,8 +166,11 @@ export function Eyebrow({ children, dark = false }: EyebrowProps) {
 
 interface HeadingProps {
   title: string
+
   lead?: string
+
   dark?: boolean
+
   center?: boolean
 }
 
@@ -141,6 +180,7 @@ export function SectionHeading({ title, lead, dark, center }: HeadingProps) {
       <h2
         className={cn(
           "font-display text-3xl leading-tight font-semibold tracking-tight sm:text-4xl",
+
           dark ? "text-white" : "text-foreground",
         )}
       >
@@ -150,6 +190,7 @@ export function SectionHeading({ title, lead, dark, center }: HeadingProps) {
         <p
           className={cn(
             "mt-4 text-[15px] leading-6 sm:text-base",
+
             dark ? "text-nav-muted" : "text-muted-foreground",
           )}
         >

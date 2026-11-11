@@ -1,6 +1,9 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { useReveal } from "@/features/marketing/hooks"
+
 import {
   Container,
   Eyebrow,
@@ -11,7 +14,9 @@ import {
 
 export function HowItWorks() {
   const { t } = useMarketingLang()
+
   const h = content.how
+
   const { ref, visible } = useReveal({ threshold: 0.25 })
 
   return (

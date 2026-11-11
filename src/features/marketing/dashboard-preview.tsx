@@ -1,8 +1,13 @@
 import { content } from "@/features/marketing/content"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { useReveal } from "@/features/marketing/hooks"
+
 import { LandingIcon } from "@/features/marketing/icons"
+
 import { Container, Eyebrow, Section } from "@/features/marketing/ui"
+
 import { cn } from "@/lib/utils"
 
 /**
@@ -14,7 +19,9 @@ import { cn } from "@/lib/utils"
 
 const SAMPLE_TILES = [
   { label: "Total sales", value: "PKR 42.8M", trend: "+6.4%" },
+
   { label: "Collected", value: "PKR 18.2M", trend: "+3.1%" },
+
   { label: "Overdue", value: "PKR 5.6M", trend: "-1.2%" },
 ]
 
@@ -22,7 +29,9 @@ const SAMPLE_BARS = [38, 52, 46, 61, 55, 72, 68, 80]
 
 export function DashboardPreview() {
   const { t } = useMarketingLang()
+
   const p = content.preview
+
   const { ref, visible } = useReveal({ threshold: 0.3 })
 
   return (
@@ -60,21 +69,25 @@ export function DashboardPreview() {
             <div className="grid grid-cols-[auto_1fr] gap-0 p-3 sm:p-4">
               {/* Rail */}
               <div className="hidden w-40 flex-col gap-1 pr-3 sm:flex">
-                {["Dashboard", "Inventory", "Bookings", "Payments", "Documents", "Reports"].map(
-                  (item, i) => (
-                    <div
-                      key={item}
-                      className={cn(
-                        "rounded-md px-3 py-2 text-[12.5px]",
-                        i === 0
-                          ? "bg-primary/20 text-white"
-                          : "text-nav-muted",
-                      )}
-                    >
-                      {item}
-                    </div>
-                  ),
-                )}
+                {[
+                  "Dashboard",
+                  "Inventory",
+                  "Bookings",
+                  "Payments",
+                  "Documents",
+                  "Reports",
+                ].map((item, i) => (
+                  <div
+                    key={item}
+                    className={cn(
+                      "rounded-md px-3 py-2 text-[12.5px]",
+
+                      i === 0 ? "bg-primary/20 text-white" : "text-nav-muted",
+                    )}
+                  >
+                    {item}
+                  </div>
+                ))}
               </div>
 
               {/* Content */}
@@ -89,7 +102,9 @@ export function DashboardPreview() {
                       <p className="mt-1 text-[15px] font-semibold text-white sm:text-lg">
                         {tile.value}
                       </p>
-                      <p className="mt-0.5 text-[11px] text-emerald-400">{tile.trend}</p>
+                      <p className="mt-0.5 text-[11px] text-emerald-400">
+                        {tile.trend}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -109,17 +124,32 @@ export function DashboardPreview() {
           {/* Floating callouts */}
           <div className="pointer-events-none absolute -top-4 left-4 hidden sm:block">
             {p.callouts.slice(0, 1).map((c) => (
-              <Callout key={c.icon} icon={c.icon} label={t(c.label)} hint={t(c.hint)} />
+              <Callout
+                key={c.icon}
+                icon={c.icon}
+                label={t(c.label)}
+                hint={t(c.hint)}
+              />
             ))}
           </div>
           <div className="pointer-events-none absolute top-1/3 -right-5 hidden sm:block">
             {p.callouts.slice(1, 2).map((c) => (
-              <Callout key={c.icon} icon={c.icon} label={t(c.label)} hint={t(c.hint)} />
+              <Callout
+                key={c.icon}
+                icon={c.icon}
+                label={t(c.label)}
+                hint={t(c.hint)}
+              />
             ))}
           </div>
           <div className="pointer-events-none absolute -bottom-4 left-10 hidden sm:block">
             {p.callouts.slice(2, 3).map((c) => (
-              <Callout key={c.icon} icon={c.icon} label={t(c.label)} hint={t(c.hint)} />
+              <Callout
+                key={c.icon}
+                icon={c.icon}
+                label={t(c.label)}
+                hint={t(c.hint)}
+              />
             ))}
           </div>
         </div>
@@ -134,7 +164,9 @@ export function DashboardPreview() {
 
 interface CalloutProps {
   icon: string
+
   label: string
+
   hint: string
 }
 

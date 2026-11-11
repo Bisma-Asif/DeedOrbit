@@ -127,6 +127,7 @@ import * as auditLog from "./routes/audit.ts"
 import * as notifications from "./routes/notifications.ts"
 
 import * as platform from "./routes/platform.ts"
+import * as media from "./media.ts"
 
 import * as demoRequests from "./routes/demo-requests.ts"
 
@@ -156,6 +157,43 @@ const routes: Route[] = [
   // --- health -------------------------------------------------------------
 
   { method: "GET", pattern: "/api/health", handler: health, public: true },
+
+  {
+    method: "GET",
+    pattern: "/api/media/config",
+    handler: media.getPublicMediaConfig,
+    public: true,
+  },
+  {
+    method: "GET",
+    pattern: "/api/media/assets/:fileName",
+    handler: media.serveMediaAsset,
+    public: true,
+  },
+  {
+    method: "GET",
+    pattern: "/api/platform/media/review",
+    handler: media.listMediaReview,
+    public: true,
+  },
+  {
+    method: "POST",
+    pattern: "/api/platform/media/candidates",
+    handler: media.findMediaCandidates,
+    public: true,
+  },
+  {
+    method: "GET",
+    pattern: "/api/platform/media/candidates/:candidateId/preview",
+    handler: media.previewMediaCandidate,
+    public: true,
+  },
+  {
+    method: "POST",
+    pattern: "/api/platform/media/select",
+    handler: media.selectMediaCandidate,
+    public: true,
+  },
 
   // --- auth ---------------------------------------------------------------
 

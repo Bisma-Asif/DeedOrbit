@@ -1,10 +1,25 @@
+import { useState } from "react"
+
 import { content } from "@/features/marketing/content"
+
+import { useMarketingMedia } from "@/features/marketing/media-config"
+
 import { useMarketingLang } from "@/features/marketing/i18n"
+
 import { usePrefersReducedMotion } from "@/features/marketing/hooks"
+
 import { BuildingScene } from "@/features/marketing/building-scene"
+
 import { LandingIcon } from "@/features/marketing/icons"
+
 import { MarketingButton } from "@/features/marketing/button"
-import { Container, scrollToSection, SECTION_IDS } from "@/features/marketing/ui"
+
+import {
+  Container,
+  scrollToSection,
+  SECTION_IDS,
+} from "@/features/marketing/ui"
+
 import { navigate } from "@/lib/router"
 
 interface HeroProps {
@@ -13,35 +28,44 @@ interface HeroProps {
 
 export function Hero({ onBookDemo }: HeroProps) {
   const { t } = useMarketingLang()
+
   const reduced = usePrefersReducedMotion()
+
+  const media = useMarketingMedia()
+
+  const [videoFailed, setVideoFailed] = useState(false)
+
   const h = content.hero
 
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-slate-950">
-      {/* Cinematic background. Under reduced motion the poster still alone is the
-          surface; the video never auto-plays. Sources 404 gracefully until the
-          owner uploads /media, in which case the poster carries the frame. */}
       <div className="absolute inset-0" aria-hidden>
         <img
-          src={content.media.heroPoster}
+          src={media.heroPoster}
           alt=""
           className="h-full w-full object-cover"
           fetchPriority="high"
           width={1920}
           height={1080}
+          onError={(event) => {
+            event.currentTarget.hidden = true
+          }}
         />
-        {!reduced ? (
+        {!reduced && !videoFailed && media.heroVideo ? (
           <video
             className="absolute inset-0 h-full w-full object-cover"
             autoPlay
             muted
             loop
             playsInline
-            poster={content.media.heroPoster}
+            poster={media.heroPoster}
             preload="none"
+            onError={() => setVideoFailed(true)}
           >
-            <source src={content.media.heroVideoWebm} type="video/webm" />
-            <source src={content.media.heroVideo} type="video/mp4" />
+            {media.heroVideoWebm ? (
+              <source src={media.heroVideoWebm} type="video/webm" />
+            ) : null}
+            <source src={media.heroVideo} type="video/mp4" />
           </video>
         ) : null}
         {/* Dark slate scrim for legibility (allowed over video). */}
