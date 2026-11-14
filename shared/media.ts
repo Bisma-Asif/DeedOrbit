@@ -486,10 +486,10 @@ export const INITIAL_LANDING_MEDIA: LandingMediaConfig = {
   },
 
   features: {
-    facade: "/media/willian-reis-GGLY--ZLZdU-unsplash.jpg",
+    facade: "/media/feature-facade.webp",
 
-    blueprints: "/media/frames-for-your-heart-2d4lAQAlbDA-unsplash.jpg",
+    blueprints: "/media/feature-blueprints.webp",
 
-    keys: "/media/salman-saqib-WaC-JFfF21M-unsplash.jpg",
+    keys: "/media/feature-keys.webp",
   },
 }
