@@ -149,3 +149,9 @@
 public/media/feature-facade.webp -filter -diff -merge -text
 public/media/feature-blueprints.webp -filter -diff -merge -text
 public/media/feature-keys.webp -filter -diff -merge -text
+
+# Hero media is served directly from Vercel's static output, so store the
+# deployed files as Git blobs rather than LFS pointer files.
+public/media/backgorund.mp4 -filter -diff -merge -text
+public/media/hero-building-cutout.png -filter -diff -merge -text
+public/media/willian-reis-GGLY--ZLZdU-unsplash.jpg -filter -diff -merge -text
