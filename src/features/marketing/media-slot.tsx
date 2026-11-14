@@ -2,10 +2,12 @@ import { useState } from "react"
 
 import { cn } from "@/lib/utils"
 
-/** Local media rendering with responsive derivatives and a non-broken fallback. */
+/** Local media rendering with a bundled fallback for unavailable assets. */
 
 interface ImageSlotProps {
   src: string
+
+  fallbackSrc?: string
 
   alt: string
 
@@ -22,22 +24,10 @@ interface ImageSlotProps {
   eager?: boolean
 }
 
-function responsiveSource(src: string, format: "webp" | "avif") {
-  const match = /^(.*)\.(?:jpe?g|png)(\?.*)?$/i.exec(src)
-
-  if (!match) return undefined
-
-  const query = match[2] ?? ""
-
-  return [800, 1600]
-
-    .map((size) => `${match[1]}-${size}.${format}${query} ${size}w`)
-
-    .join(", ")
-}
-
 export function ImageSlot({
   src,
+
+  fallbackSrc,
 
   alt,
 
@@ -52,8 +42,11 @@ export function ImageSlot({
   eager = false,
 }: ImageSlotProps) {
   const [failed, setFailed] = useState(false)
+  const [fallbackFailed, setFallbackFailed] = useState(false)
 
-  if (failed || !src) {
+  const useFallback = failed && Boolean(fallbackSrc) && fallbackSrc !== src
+
+  if (fallbackFailed || (failed && !useFallback) || !src) {
     return (
       <div
         role="img"
@@ -70,24 +63,20 @@ export function ImageSlot({
 
   return (
     <picture className={cn("block h-full w-full", className)}>
-      <source
-        type="image/avif"
-        srcSet={responsiveSource(src, "avif")}
-        sizes="(max-width: 640px) 100vw, 800px"
-      />
-      <source
-        type="image/webp"
-        srcSet={responsiveSource(src, "webp")}
-        sizes="(max-width: 640px) 100vw, 800px"
-      />
       <img
-        src={src}
+        src={useFallback ? fallbackSrc : src}
         alt={alt}
         width={width}
         height={height}
         loading={eager ? "eager" : "lazy"}
         decoding="async"
-        onError={() => setFailed(true)}
+        onError={() => {
+          if (useFallback) {
+            setFallbackFailed(true)
+          } else {
+            setFailed(true)
+          }
+        }}
         className={cn("h-full w-full object-cover", imgClassName)}
       />
     </picture>

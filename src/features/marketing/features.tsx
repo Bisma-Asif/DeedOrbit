@@ -102,21 +102,32 @@ export function Features() {
                     {index === 0 ? (
                       <div className="grid aspect-[16/10] grid-cols-5 grid-rows-2 gap-1 overflow-hidden rounded-xl">
                         <ImageSlot
-                          src={media.features.facade}
+                          src={
+                            media.features.facade ||
+                            content.media.features.facade
+                          }
+                          fallbackSrc={content.media.features.facade}
                           alt="Modern building facade"
                           width={1280}
                           height={800}
                           className="col-span-3 row-span-2"
                         />
                         <ImageSlot
-                          src={media.features.blueprints}
+                          src={
+                            media.features.blueprints ||
+                            content.media.features.blueprints
+                          }
+                          fallbackSrc={content.media.features.blueprints}
                           alt="Architectural blueprints on a desk"
                           width={1280}
                           height={800}
                           className="col-span-2"
                         />
                         <ImageSlot
-                          src={media.features.keys}
+                          src={
+                            media.features.keys || content.media.features.keys
+                          }
+                          fallbackSrc={content.media.features.keys}
                           alt="House keys and a miniature home"
                           width={1280}
                           height={800}
@@ -126,7 +137,10 @@ export function Features() {
                     ) : (
                       <div className="overflow-hidden rounded-xl">
                         <ImageSlot
-                          src={media.features.keys}
+                          src={
+                            media.features.keys || content.media.features.keys
+                          }
+                          fallbackSrc={content.media.features.keys}
                           alt="House keys and a miniature home"
                           width={1280}
                           height={800}
