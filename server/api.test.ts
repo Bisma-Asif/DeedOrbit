@@ -88,7 +88,11 @@ const { STRUCTURE_MAX_DEPTH } = await import("../shared/projects.ts")
 // literal, so adding a kind (requisition, purchase_order) to the product
 // automatically widens what these tests expect instead of leaving them stale.
 
-const { NUMBER_KINDS } = await import("../shared/organization.ts")
+const { LOGO_MAX_BYTES, NUMBER_KINDS } = await import(
+  "../shared/organization.ts"
+)
+
+const { parseLeadImportFile } = await import("../src/lib/lead-import.ts")
 
 const workdir = mkdtempSync(join(tmpdir(), "deedorbit-test-"))
 
@@ -1183,6 +1187,27 @@ test("a tenant admin can invite, and the invite lands as a pending user", async 
   assert.equal(person.roleId, "sales_agent")
 
   assert.ok(person.pendingInvite, "pending invite should be reported")
+})
+
+test("a sales manager can invite sales agents without user-administration access", async () => {
+  const { cookies } = await signIn("sales.manager@deedorbit.com")
+
+  const salesAgents = await call(cookies, "GET", "/api/sales-agents")
+  assert.equal(salesAgents.body.canInviteAgent, true)
+
+  const invited = await call(cookies, "POST", "/api/users/invite", {
+    email: "new.agent@deedorbit.com",
+    fullName: "New Sales Agent",
+    roleId: "sales_agent",
+  })
+  assert.equal(invited.status, 200)
+
+  const otherRole = await call(cookies, "POST", "/api/users/invite", {
+    email: "new.accounts.officer@deedorbit.com",
+    fullName: "New Accounts Officer",
+    roleId: "accounts_officer",
+  })
+  assert.equal(otherRole.status, 403)
 })
 
 test("an invited user cannot sign in until the invitation is accepted", async () => {
@@ -2439,6 +2464,44 @@ test("the logo round-trips and can be removed", async () => {
   assert.equal(removed.status, 200)
 
   assert.equal(removed.body.settings.logo, null)
+})
+
+test("the logo accepts images above 128 KB and rejects images above 256 KB", async () => {
+  const { cookies } = await signIn("admin@deedorbit.com")
+  const pngSignature = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  ])
+  const acceptedPng = Buffer.concat([
+    pngSignature,
+    Buffer.alloc(156 * 1024 - pngSignature.length, 0x41),
+  ])
+
+  const accepted = await call(
+    cookies,
+    "PUT",
+    "/api/settings/organization/logo",
+    {
+      logoDataUrl: `data:image/png;base64,${acceptedPng.toString("base64")}`,
+    },
+  )
+
+  assert.equal(accepted.status, 200)
+
+  const oversizedPng = Buffer.concat([
+    pngSignature,
+    Buffer.alloc(LOGO_MAX_BYTES + 1 - pngSignature.length, 0x41),
+  ])
+  const rejected = await call(
+    cookies,
+    "PUT",
+    "/api/settings/organization/logo",
+    {
+      logoDataUrl: `data:image/png;base64,${oversizedPng.toString("base64")}`,
+    },
+  )
+
+  assert.equal(rejected.status, 400)
+  assert.match(rejected.body.error.fields.logo, /256 KB/)
 })
 
 test("organization settings are scoped to the caller's own workspace", async () => {
@@ -11337,8 +11400,33 @@ test("lead budgets are validated before anything is stored", async () => {
   assert.ok(result.body.error.fields.budgetMax)
 })
 
-test("lead records are tenant-scoped and import remains an explicit placeholder", async () => {
+test("lead CSV parser handles quoted values, flexible headers, and budgets", () => {
+  const parsed = parseLeadImportFile(
+    [
+      "Full Name,Phone,Email,Project Interest,Budget Min,Budget Max",
+      '"Aisha, Khan",+971500000001,aisha@example.com,"Marina, Phase 2","500,000",900000',
+    ].join("\r\n"),
+  )
+
+  assert.equal(parsed.headerFound, true)
+  assert.deepEqual(parsed.rows, [
+    {
+      row: 2,
+      values: {
+        name: "Aisha, Khan",
+        phone: "+971500000001",
+        email: "aisha@example.com",
+        projectInterest: "Marina, Phase 2",
+        budgetMin: 500000,
+        budgetMax: 900000,
+      },
+    },
+  ])
+})
+
+test("lead records are tenant-scoped and imports cannot read another workspace's campaign", async () => {
   const { cookies } = await signIn("sales.agent@deedorbit.com")
+  const { cookies: admin } = await signIn("admin@deedorbit.com")
 
   const created = await call(cookies, "POST", "/api/leads", {
     name: "Private Lead",
@@ -11347,6 +11435,12 @@ test("lead records are tenant-scoped and import remains an explicit placeholder"
   })
 
   assert.equal(created.status, 200)
+
+  const campaign = await call(admin, "POST", "/api/campaigns", {
+    name: "Private Campaign",
+    source: "Private Source",
+  })
+  assert.equal(campaign.status, 200)
 
   const signup = await call(jar(), "POST", "/api/auth/signup", {
     email: "leads.scope@example.com",
@@ -11374,9 +11468,21 @@ test("lead records are tenant-scoped and import remains an explicit placeholder"
   )
   assert.equal(crossTenant.status, 404)
 
-  const placeholder = await call(otherCookies, "POST", "/api/leads/import", {})
-  assert.equal(placeholder.status, 501)
-  assert.equal(placeholder.body.error.code, "not_implemented")
+  const foreignCampaign = await call(
+    otherCookies,
+    "POST",
+    "/api/leads/import",
+    {
+      campaignId: campaign.body.campaignId,
+      rows: [
+        {
+          row: 2,
+          values: { name: "Foreign Lead", phone: "+1 555 123 4567" },
+        },
+      ],
+    },
+  )
+  assert.equal(foreignCampaign.status, 404)
 })
 
 test("pipeline stages, follow-ups, activity, lost reasons, and customer conversion work together", async () => {
@@ -15624,6 +15730,58 @@ test("campaign CRUD drives a public webhook, and rotation strands the old token"
   assert.equal(inactive.status, 403)
 
   assert.equal(inactive.body.error.code, "campaign_inactive")
+})
+
+test("campaign lead imports add valid rows to the campaign and Leads list", async () => {
+  const staff = (await signIn("sales.manager@deedorbit.com")).cookies
+  const created = await call(staff, "POST", "/api/campaigns", {
+    name: "Summer CSV",
+    channel: "social",
+    source: "Summer Social",
+  })
+  assert.equal(created.status, 200)
+
+  const imported = await call(staff, "POST", "/api/leads/import", {
+    campaignId: created.body.campaignId,
+    rows: [
+      {
+        row: 2,
+        values: {
+          name: "Aisha Imported",
+          phone: "+971500000001",
+          email: "aisha.imported@example.com",
+          projectInterest: "Marina Apartment",
+          budgetMin: 500000,
+          budgetMax: 900000,
+        },
+      },
+      {
+        row: 3,
+        values: { name: "Missing Phone", phone: "" },
+      },
+    ],
+  })
+
+  assert.equal(imported.status, 200, JSON.stringify(imported.body))
+  assert.equal(imported.body.created, 1)
+  assert.equal(imported.body.failed, 1)
+  assert.equal(imported.body.failures[0].row, 3)
+  assert.ok(imported.body.failures[0].errors.phone)
+
+  const leads = await call(staff, "GET", "/api/leads")
+  const lead = leads.body.leads.find(
+    (entry: Json) => entry.name === "Aisha Imported",
+  )
+  assert.ok(lead)
+  assert.equal(lead.campaign, "Summer CSV")
+  assert.equal(lead.source, "Summer Social")
+
+  const campaign = await call(
+    staff,
+    "GET",
+    `/api/campaigns/${created.body.campaignId}`,
+  )
+  assert.equal(campaign.body.campaign.metrics.leads, 1)
 })
 
 test("campaign metrics trace leads through conversion to bookings", async () => {

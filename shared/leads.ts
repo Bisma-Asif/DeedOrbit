@@ -55,3 +55,32 @@ export const LEAD_NOTE_MAX = 2000
 export const LEAD_STAGE_LABEL_MAX = 40
 
 export const LEAD_STAGE_MAX = 16
+
+export const LEAD_IMPORT_MAX_ROWS = 500
+
+export const LEAD_IMPORT_MAX_REQUEST_BYTES = 512 * 1024
+
+export interface LeadImportRowInput {
+  row: number
+  values: Record<string, unknown>
+}
+
+export interface LeadImportFailure {
+  row: number
+  errors: Record<string, string>
+}
+
+export interface LeadImportResponse {
+  created: number
+  failed: number
+  failures: LeadImportFailure[]
+}
+
+export const LEAD_IMPORT_COLUMNS = [
+  { column: "Full Name", key: "name", required: true },
+  { column: "Phone", key: "phone", required: true },
+  { column: "Email", key: "email", required: false },
+  { column: "Project Interest", key: "projectInterest", required: false },
+  { column: "Budget Min", key: "budgetMin", required: false },
+  { column: "Budget Max", key: "budgetMax", required: false },
+] as const

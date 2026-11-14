@@ -52,9 +52,9 @@ export type Json = Record<string, unknown> | unknown[]
 /**
  * Reads and parses a JSON body.
  *
- * `maxBytes` exists for the one endpoint that legitimately needs more than the
- * global cap (logo upload). It is an argument rather than a raised constant so
- * a single oversized route cannot quietly widen the limit for every route.
+ * `maxBytes` exists for specific endpoints that legitimately need more than the
+ * global cap (such as logo and lead imports). It is an argument rather than a
+ * raised constant so one oversized route cannot widen the limit for every route.
  */
 export async function readJsonBody<T = Json>(
   req: IncomingMessage,

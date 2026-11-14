@@ -277,7 +277,7 @@ interface OverrideEffectRow {
 }
 
 export async function inviteUser(ctx: RequestContext) {
-  const guarded = requirePermission(requireAuth(ctx), "users", "create")
+  const guarded = requireAuth(ctx)
 
   const body = await readJsonBody<Record<string, unknown>>(ctx.req)
 
@@ -292,6 +292,10 @@ export async function inviteUser(ctx: RequestContext) {
   const roleId = String(body.roleId ?? "")
 
   const jobTitle = String(body.jobTitle ?? "").trim() || null
+
+  if (roleId !== "sales_agent" || !guarded.can("sales_agents", "create")) {
+    requirePermission(guarded, "users", "create")
+  }
 
   if (!EMAIL_PATTERN.test(email)) {
     throw badRequest("Enter a valid email address", {

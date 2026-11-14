@@ -6,6 +6,7 @@ import {
   Plus,
   Search,
   Target,
+  UserPlus,
   UsersRound,
 } from "lucide-react"
 
@@ -51,6 +52,8 @@ import { StatCard } from "@/components/stat-card"
 
 import { useSave } from "@/features/organization/use-save"
 
+import { InviteDialog } from "@/features/users/invite-dialog"
+
 import { formatCurrency, formatNumber } from "@/lib/format"
 
 import {
@@ -84,6 +87,11 @@ function initials(name: string): string {
     .toUpperCase()
 }
 
+const SALES_AGENT_INVITE_ROLE = {
+  id: "sales_agent",
+  label: "Sales Agent",
+} as const
+
 export function SalesAgentsPage() {
   const [month, setMonth] = useState(currentMonth)
 
@@ -96,6 +104,8 @@ export function SalesAgentsPage() {
   const [teamDialog, setTeamDialog] = useState<SalesTeam | null | undefined>(
     undefined,
   )
+
+  const [inviteAgentOpen, setInviteAgentOpen] = useState(false)
 
   const [targetAgent, setTargetAgent] = useState<SalesAgent | null>(null)
 
@@ -223,12 +233,23 @@ export function SalesAgentsPage() {
         title="Sales Agents"
         description="Teams, monthly targets, and individual sales performance."
         actions={
-          canManage && (
-            <Button onClick={() => setTeamDialog(null)}>
-              <Plus size={13} />
-              New team
-            </Button>
-          )
+          <div className="flex items-center gap-2">
+            {data?.canInviteAgent && (
+              <Button
+                variant="outline"
+                onClick={() => setInviteAgentOpen(true)}
+              >
+                <UserPlus size={13} />
+                Add agent
+              </Button>
+            )}
+            {data?.canCreateTeam && (
+              <Button onClick={() => setTeamDialog(null)}>
+                <Plus size={13} />
+                New team
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -401,6 +422,15 @@ export function SalesAgentsPage() {
           onSave={saveTeam}
         />
       )}
+      <InviteDialog
+        open={inviteAgentOpen}
+        onOpenChange={setInviteAgentOpen}
+        roles={[]}
+        fixedRole={SALES_AGENT_INVITE_ROLE}
+        onInvited={() => {
+          void resource.reload()
+        }}
+      />
       {targetAgent && data && (
         <TargetDialog
           key={`${targetAgent.id}-${month}`}

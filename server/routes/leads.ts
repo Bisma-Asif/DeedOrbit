@@ -2,13 +2,13 @@ import { all, get, run, transaction } from "../db.ts"
 
 import {
   badRequest,
-  HttpError,
   notFound,
   readJsonBody,
   type RequestContext,
 } from "../http.ts"
 
 import { requireAuth, requirePermission, writeAudit } from "../middleware.ts"
+import type { GuardedContext } from "../middleware.ts"
 
 import { newId } from "../crypto.ts"
 
@@ -18,6 +18,8 @@ import {
   DEFAULT_LEAD_STAGES,
   LEAD_CAMPAIGN_MAX,
   LEAD_EMAIL_MAX,
+  LEAD_IMPORT_MAX_REQUEST_BYTES,
+  LEAD_IMPORT_MAX_ROWS,
   LEAD_INTEREST_MAX,
   LEAD_LOST_REASON_MAX,
   LEAD_NAME_MAX,
@@ -26,6 +28,7 @@ import {
   LEAD_SOURCE_MAX,
   LEAD_STAGE_LABEL_MAX,
   LEAD_STAGE_MAX,
+  type LeadImportFailure,
   type LeadStatus,
 } from "../../shared/leads.ts"
 
@@ -245,6 +248,12 @@ interface LeadStageDbRow {
   tone: LeadStageRow["tone"]
   sort_order: number
   is_builtin: number
+}
+
+interface CampaignImportTarget {
+  id: string
+  name: string
+  source: string
 }
 
 interface LeadActivityDbRow {
@@ -664,35 +673,43 @@ export async function createLead(ctx: RequestContext) {
 
   assertDealer(guarded.tenantId, values.assignedDealerId)
 
-  const id = newId("lead")
+  const id = persistLead(guarded, values, null, ctx.ip)
 
+  return { lead: toLead(requireLead(guarded.tenantId, id)) }
+}
+
+function persistLead(
+  guarded: GuardedContext,
+  values: LeadValues,
+  campaignId: string | null,
+  ip?: string,
+): string {
+  const id = newId("lead")
   const stamp = new Date().toISOString()
 
   run(
     `INSERT INTO leads (
       id, tenant_id, full_name, phone, email, source, campaign, project_interest,
-      budget_min, budget_max, assigned_agent_id, assigned_dealer_id, status, follow_up_date, lost_reason,
-      created_by, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-
+      budget_min, budget_max, assigned_agent_id, assigned_dealer_id, status,
+      follow_up_date, lost_reason, created_by, campaign_id, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     guarded.tenantId,
     values.name,
     values.phone,
     values.email,
     values.source,
-
     values.campaign,
     values.projectInterest,
     values.budgetMin,
     values.budgetMax,
-
     values.assignedAgentId,
     values.assignedDealerId,
     values.status,
     values.followUpDate,
     values.lostReason,
     guarded.userId,
+    campaignId,
     stamp,
     stamp,
   )
@@ -713,12 +730,14 @@ export async function createLead(ctx: RequestContext) {
     "lead.created",
     "lead",
     id,
-    { source: values.source, status: values.status },
-    ctx.ip,
+    {
+      source: values.source,
+      status: values.status,
+      ...(campaignId === null ? {} : { campaignId }),
+    },
+    ip,
   )
 
-  // Fire-and-forget: the response has its row committed and must not wait on a
-  // slow endpoint. Any delivery outcome lands in the webhook log, not here.
   void emitEvent(guarded.tenantId, "lead_created", {
     event: "lead_created",
     leadId: id,
@@ -731,7 +750,7 @@ export async function createLead(ctx: RequestContext) {
     createdAt: stamp,
   })
 
-  return { lead: toLead(requireLead(guarded.tenantId, id)) }
+  return id
 }
 
 export async function updateLead(ctx: RequestContext) {
@@ -1111,14 +1130,92 @@ export async function convertLeadToCustomer(ctx: RequestContext) {
   }
 }
 
-/** Reserved for authenticated bulk import and external lead capture integrations. */
-
-export async function importLeadsPlaceholder(ctx: RequestContext) {
-  requirePermission(requireAuth(ctx), "leads", "create")
-
-  throw new HttpError(
-    501,
-    "not_implemented",
-    "Bulk import and external lead capture are not available yet.",
+/** Imports valid rows for one campaign while returning row-level validation failures. */
+export async function importCampaignLeads(ctx: RequestContext) {
+  const guarded = requirePermission(requireAuth(ctx), "leads", "create")
+  const body = await readJsonBody<Record<string, unknown>>(
+    ctx.req,
+    LEAD_IMPORT_MAX_REQUEST_BYTES,
   )
+
+  const campaignId =
+    typeof body.campaignId === "string" ? body.campaignId.trim() : ""
+  if (campaignId === "") {
+    throw badRequest("Choose a campaign for this import.", {
+      campaignId: "Choose a campaign.",
+    })
+  }
+
+  const campaign = get<CampaignImportTarget>(
+    `SELECT id, name, source FROM campaigns WHERE tenant_id = ? AND id = ?`,
+    guarded.tenantId,
+    campaignId,
+  )
+  if (!campaign) throw notFound("That campaign does not exist")
+
+  if (!Array.isArray(body.rows) || body.rows.length === 0) {
+    throw badRequest("Choose a file with at least one lead row.", {
+      rows: "Add at least one lead row.",
+    })
+  }
+  if (body.rows.length > LEAD_IMPORT_MAX_ROWS) {
+    throw badRequest(
+      `Import at most ${LEAD_IMPORT_MAX_ROWS} leads at a time.`,
+      { rows: `Keep the file to ${LEAD_IMPORT_MAX_ROWS} rows or fewer.` },
+    )
+  }
+
+  const failures: LeadImportFailure[] = []
+  let created = 0
+
+  for (const [index, rawRow] of body.rows.entries()) {
+    const rowNumber =
+      isRecord(rawRow) &&
+      typeof rawRow.row === "number" &&
+      Number.isInteger(rawRow.row) &&
+      rawRow.row >= 2
+        ? rawRow.row
+        : index + 2
+
+    if (!isRecord(rawRow) || !isRecord(rawRow.values)) {
+      failures.push({
+        row: rowNumber,
+        errors: { row: "This row could not be read." },
+      })
+      continue
+    }
+
+    const { values, errors } = buildLead(
+      {
+        name: rawRow.values.name,
+        phone: rawRow.values.phone,
+        email: rawRow.values.email,
+        source: campaign.source,
+        campaign: campaign.name,
+        projectInterest: rawRow.values.projectInterest,
+        budgetMin: rawRow.values.budgetMin,
+        budgetMax: rawRow.values.budgetMax,
+        status: "new",
+      },
+      guarded.tenantId,
+    )
+
+    if (Object.keys(errors).length > 0) {
+      failures.push({ row: rowNumber, errors })
+      continue
+    }
+
+    persistLead(guarded, values, campaign.id, ctx.ip)
+    created += 1
+  }
+
+  return {
+    created,
+    failed: failures.length,
+    failures,
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }

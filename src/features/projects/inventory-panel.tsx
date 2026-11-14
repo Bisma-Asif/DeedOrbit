@@ -667,15 +667,24 @@ function buildFilterChips(
  * screen has to guess about.
  */
 
+function missingUnitFields(values: UnitFormValues): string[] {
+  const missing: string[] = []
+
+  if (values.unitCode === "") missing.push("Unit code")
+  if (values.classification.propertyType === "") {
+    missing.push("Property type")
+  } else if (values.unitType === "") {
+    missing.push("Family")
+  }
+  if (values.structureNodeId === "") missing.push("Located in")
+  if (values.sizeSqft === "") missing.push("Size")
+  if (values.basePrice === "") missing.push("Base price")
+
+  return missing
+}
+
 function unitReady(values: UnitFormValues): values is CompleteUnitForm {
-  return (
-    values.unitCode !== "" &&
-    values.unitType !== "" &&
-    values.structureNodeId !== "" &&
-    values.sizeSqft !== "" &&
-    values.basePrice !== "" &&
-    values.classification.propertyType !== ""
-  )
+  return missingUnitFields(values).length === 0
 }
 
 export function InventoryPanel({
@@ -2069,17 +2078,15 @@ export function InventoryPanel({
 
               ...classificationInput(values.classification),
             })
-
-            await reloadAll()
           })
 
-          // The unit is in the table now, so the dialog has done its job.
+          if (!created) return
 
-          if (created) {
-            save.clear()
-
-            setEditor({ mode: "closed" })
-          }
+          // A successful create closes the form even if refreshing the surrounding
+          // lists takes longer or fails; the server has already stored the unit.
+          save.clear()
+          setEditor({ mode: "closed" })
+          await reloadAll()
         }}
         onEdit={async (unitId, values) => {
           const updated = await save.run(async () => {
@@ -3038,6 +3045,7 @@ function UnitFormBody({
   }
 
   const canSubmit = unitReady(values)
+  const missingFields = missingUnitFields(values)
 
   /**
    * Whether the status is actually moving, and whether this form is even allowed to
@@ -3655,6 +3663,16 @@ function UnitFormBody({
             <AlertDescription>{save.error}</AlertDescription>
           </Alert>
         </div>
+      )}
+
+      {missingFields.length > 0 && (
+        <p
+          role="status"
+          className="mt-2 text-[11.5px] text-muted-foreground"
+          aria-live="polite"
+        >
+          Complete required fields to save: {missingFields.join(", ")}.
+        </p>
       )}
 
       <DialogFooter>

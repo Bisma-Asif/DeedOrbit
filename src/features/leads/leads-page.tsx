@@ -460,7 +460,7 @@ export function LeadsPage() {
     if (current) await leadsApi.update(current.id, toInput(draft))
     else await leadsApi.create(toInput(draft))
 
-    await resource.reload()
+    void resource.reload()
   }
 
   async function moveLead(lead: Lead, nextStage: string) {
@@ -1015,7 +1015,10 @@ function LeadDialog({
             onClick={async () => {
               const saved = await save.run(() => onSubmit(draft, lead))
 
-              if (saved) save.clear()
+              if (saved) {
+                save.clear()
+                onClose()
+              }
             }}
             disabled={save.saving}
           >

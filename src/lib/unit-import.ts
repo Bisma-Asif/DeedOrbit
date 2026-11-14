@@ -30,6 +30,7 @@ import type {
   UnitImportFailure,
   UnitImportRowInput,
 } from "./project-inventory-api"
+import { parseDelimitedText } from "./delimited-text.ts"
 
 /** What a parsed file carries to the dialog. */
 
@@ -87,102 +88,6 @@ const NUMERIC_KEYS = new Set(
 
 const MAX_COLUMNS = UNIT_IMPORT_FIELDS.length + 8
 
-/**
- * Split a delimited file into cells.
- *
- * Handles a quoted field containing the delimiter, a doubled quote inside it, and a
- * newline inside it — which is what a Description column with a line break in it looks
- * like, and the reason a `split(",")` implementation of a CSV reader gets blamed for
- * losing rows.
- */
-
-function splitDelimited(text: string, delimiter: string): string[][] {
-  const rows: string[][] = []
-
-  let row: string[] = []
-
-  let cell = ""
-
-  let quoted = false
-
-  const source = text.replace(/\r\n?/g, "\n")
-
-  for (let index = 0; index < source.length; index++) {
-    const char = source[index]
-
-    if (quoted) {
-      if (char === '"') {
-        if (source[index + 1] === '"') {
-          cell += '"'
-
-          index++
-        } else quoted = false
-      } else cell += char
-
-      continue
-    }
-
-    if (char === '"') {
-      quoted = true
-
-      continue
-    }
-
-    if (char === delimiter) {
-      row.push(cell)
-
-      cell = ""
-
-      continue
-    }
-
-    if (char === "\n") {
-      row.push(cell)
-
-      rows.push(row)
-
-      row = []
-
-      cell = ""
-
-      continue
-    }
-
-    cell += char
-  }
-
-  row.push(cell)
-
-  rows.push(row)
-
-  return rows
-}
-
-/**
- * Guess the delimiter from the header line.
- *
- * Excel exports `.csv` as commas and `.csv (Macintosh)`/regional exports as semicolons,
- * and a copy-paste out of Excel is tab-separated. Counting which candidate appears most
- * often on the first line is enough to pick correctly for every one of those, and the
- * alternative — asking the user — is a question they cannot answer.
- */
-
-function detectDelimiter(text: string): string {
-  const firstLine = text.replace(/\r\n?/g, "\n").split("\n")[0] ?? ""
-
-  const tallies = [",", "\t", ";"].map((candidate) => ({
-    candidate,
-
-    count: firstLine.split(candidate).length - 1,
-  }))
-
-  let best = tallies[0]
-
-  for (const tally of tallies) if (tally.count > best.count) best = tally
-
-  return best.candidate
-}
-
 /** `1,850,000` is the same number as `1850000`, and a tracker writes it that way. */
 
 function readNumericCell(value: string): string {
@@ -204,11 +109,7 @@ function isBlank(cells: readonly string[]): boolean {
  */
 
 export function parseUnitImportFile(text: string): ParsedUnitImport {
-  const delimiter = detectDelimiter(text)
-
-  const grid = splitDelimited(text, delimiter).filter(
-    (cells) => !isBlank(cells),
-  )
+  const grid = parseDelimitedText(text).filter((cells) => !isBlank(cells))
 
   const empty: ParsedUnitImport = {
     rows: [],

@@ -12,7 +12,14 @@
 
 import { useState } from "react"
 
-import { ArrowLeft, Megaphone, Pencil, Share2, Trash2 } from "lucide-react"
+import {
+  ArrowLeft,
+  Megaphone,
+  Pencil,
+  Share2,
+  Trash2,
+  Upload,
+} from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -49,6 +56,7 @@ import { useAsyncResource } from "@/lib/use-async-resource"
 import { CampaignFormDialog } from "./campaign-form-dialog"
 
 import { CampaignIntegrationDialog } from "./campaign-integration-dialog"
+import { CampaignLeadImportDialog } from "./campaign-lead-import-dialog"
 
 import { CAMPAIGN_CHANNELS, CAMPAIGN_CHANNEL_LABELS } from "@shared/campaigns"
 
@@ -93,6 +101,8 @@ export function CampaignDetailPage({ campaignId }: CampaignDetailPageProps) {
   const [sharing, setSharing] = useState(false)
 
   const [confirmArchive, setConfirmArchive] = useState(false)
+
+  const [importingLeads, setImportingLeads] = useState(false)
 
   if (!canView) {
     return (
@@ -153,6 +163,17 @@ export function CampaignDetailPage({ campaignId }: CampaignDetailPageProps) {
         <Share2 size={13} />
         Intake &amp; token
       </Button>
+
+      {session.can("leads", "create") ? (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setImportingLeads(true)}
+        >
+          <Upload size={13} />
+          Import leads
+        </Button>
+      ) : null}
 
       {canManage ? (
         <>
@@ -341,6 +362,14 @@ export function CampaignDetailPage({ campaignId }: CampaignDetailPageProps) {
         campaign={campaign}
         integration={integration}
         onRotated={() => void resource.reload()}
+      />
+
+      <CampaignLeadImportDialog
+        open={importingLeads}
+        campaignId={campaign.id}
+        campaignName={campaign.name}
+        onClose={() => setImportingLeads(false)}
+        onImported={() => resource.reload()}
       />
     </div>
   )

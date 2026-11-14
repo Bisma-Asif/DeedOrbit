@@ -631,7 +631,7 @@ export async function updateOrganization(ctx: RequestContext) {
 /**
  * PUT /api/settings/organization/logo
  *
- * Reads with a route-specific body cap because a 128 KB image cannot fit the
+ * Reads with a route-specific body cap because a 256 KB image cannot fit the
  * global 64 KB JSON limit once base64-encoded. The cap is passed per call
  * rather than by raising the global default.
  */

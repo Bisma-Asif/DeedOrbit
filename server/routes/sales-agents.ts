@@ -229,6 +229,9 @@ export async function listSalesAgents(ctx: RequestContext) {
     canManage: guarded.can("sales_agents", "edit"),
 
     canCreateTeam: guarded.can("sales_agents", "create"),
+
+    canInviteAgent:
+      guarded.can("sales_agents", "create") || guarded.can("users", "create"),
   }
 }
 

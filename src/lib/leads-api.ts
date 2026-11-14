@@ -5,6 +5,7 @@ import type {
 import { emptyCustomerInput } from "@shared/customer-entry"
 
 import type { LeadStatus } from "@shared/leads"
+import type { LeadImportResponse, LeadImportRowInput } from "@shared/leads"
 
 import { api } from "./api"
 
@@ -331,6 +332,9 @@ export const leadsApi = {
     api.get<LeadListResponse>("/api/leads", signal),
 
   create: (input: LeadInput) => api.post<LeadResponse>("/api/leads", input),
+
+  importCampaign: (campaignId: string, rows: LeadImportRowInput[]) =>
+    api.post<LeadImportResponse>("/api/leads/import", { campaignId, rows }),
 
   update: (id: string, input: LeadInput) =>
     api.patch<LeadResponse>(`/api/leads/${id}`, input),

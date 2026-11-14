@@ -56,6 +56,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { EmptyState } from "@/components/empty-state"
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 type TopBarProps = {
   user: SessionUser
@@ -430,63 +439,151 @@ function UserMenu({
   user: SessionUser
   onSignOut: () => void
 }) {
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [supportOpen, setSupportOpen] = useState(false)
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="flex h-8 items-center gap-2 rounded-md px-1 pr-1.5 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-        >
-          <Avatar>
-            <AvatarFallback>{user.initials}</AvatarFallback>
-          </Avatar>
-          <span className="hidden text-left leading-tight xl:block">
-            <span className="block text-[12.5px] font-medium text-foreground">
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="flex h-8 items-center gap-2 rounded-md px-1 pr-1.5 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            <Avatar>
+              <AvatarFallback>{user.initials}</AvatarFallback>
+            </Avatar>
+            <span className="hidden text-left leading-tight xl:block">
+              <span className="block text-[12.5px] font-medium text-foreground">
+                {user.name}
+              </span>
+              <span className="block text-[10.5px] text-muted-foreground">
+                {user.roleLabel}
+              </span>
+            </span>
+            <ChevronDown
+              size={13}
+              className="hidden shrink-0 text-muted-foreground sm:block"
+            />
+          </button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end" className="w-60">
+          <DropdownMenuLabel className="normal-case">
+            <span className="block text-[12.5px] font-semibold text-foreground">
               {user.name}
             </span>
-            <span className="block text-[10.5px] text-muted-foreground">
-              {user.roleLabel}
+            <span className="mt-0.5 block text-[11px] font-normal tracking-normal text-muted-foreground">
+              {user.email}
             </span>
-          </span>
-          <ChevronDown
-            size={13}
-            className="hidden shrink-0 text-muted-foreground sm:block"
-          />
-        </button>
-      </DropdownMenuTrigger>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
+            <UserRound size={14} />
+            My profile
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => navigate("/settings/notifications")}
+          >
+            <Settings2 size={14} />
+            Preferences
+            <span className="ml-auto text-[10.5px] text-muted-foreground">
+              ⌘,
+            </span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setSupportOpen(true)}>
+            <LifeBuoy size={14} />
+            Support centre
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="danger" onSelect={onSignOut}>
+            <LogOut size={14} />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-      <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuLabel className="normal-case">
-          <span className="block text-[12.5px] font-semibold text-foreground">
-            {user.name}
-          </span>
-          <span className="mt-0.5 block text-[11px] font-normal tracking-normal text-muted-foreground">
-            {user.email}
-          </span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => navigate("/settings")}>
-          <UserRound size={14} />
-          My profile
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => navigate("/settings")}>
-          <Settings2 size={14} />
-          Preferences
-          <span className="ml-auto text-[10.5px] text-muted-foreground">
-            ⌘,
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <LifeBuoy size={14} />
-          Support centre
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="danger" onSelect={onSignOut}>
-          <LogOut size={14} />
-          Sign out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>My profile</DialogTitle>
+            <DialogDescription>
+              Your account details for this workspace.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogBody className="flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <Avatar className="size-10">
+                <AvatarFallback>{user.initials}</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-semibold text-foreground">
+                  {user.name}
+                </p>
+                <p className="truncate text-[12px] text-muted-foreground">
+                  {user.roleLabel}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-md border border-border">
+              <div className="border-b border-border px-3 py-2">
+                <p className="text-[10.5px] font-medium text-muted-foreground">
+                  Email
+                </p>
+                <p className="mt-0.5 break-all text-[12.5px] text-foreground">
+                  {user.email}
+                </p>
+              </div>
+              <div className="px-3 py-2">
+                <p className="text-[10.5px] font-medium text-muted-foreground">
+                  Workspace role
+                </p>
+                <p className="mt-0.5 text-[12.5px] text-foreground">
+                  {user.roleLabel}
+                </p>
+              </div>
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProfileOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Support centre</DialogTitle>
+            <DialogDescription>
+              Create a support ticket or follow up on an existing request in the
+              Tickets module.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogBody>
+            <p className="text-[12px] leading-5 text-muted-foreground">
+              Ticket access is controlled by your workspace role. If you cannot
+              access tickets, ask your workspace administrator for access.
+            </p>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSupportOpen(false)}>
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                setSupportOpen(false)
+                navigate("/tickets")
+              }}
+            >
+              <LifeBuoy size={14} />
+              Open support tickets
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

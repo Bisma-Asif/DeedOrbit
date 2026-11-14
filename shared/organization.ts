@@ -262,14 +262,14 @@ export const LOGO_MIME_TYPES = [
 export type LogoMimeType = typeof LOGO_MIME_TYPES[number]
 
 /** Decoded size ceiling. Checked on the decoded bytes, not the encoded string. */
-export const LOGO_MAX_BYTES = 128 * 1024
+export const LOGO_MAX_BYTES = 256 * 1024
 
 /**
  * Request ceiling for the upload endpoint, which must also cover base64
  * expansion (~4/3) plus the surrounding JSON. The global 64 KB body cap in
  * server/http.ts is correct for every other route and is not raised.
  */
-export const LOGO_MAX_REQUEST_BYTES = 220 * 1024
+export const LOGO_MAX_REQUEST_BYTES = 360 * 1024
 
 const LOGO_MIME_SET: readonly string[] = LOGO_MIME_TYPES
 

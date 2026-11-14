@@ -63,6 +63,8 @@ export interface SalesAgentListResponse {
   canManage: boolean
 
   canCreateTeam: boolean
+
+  canInviteAgent: boolean
 }
 
 export interface SalesTeamInput {

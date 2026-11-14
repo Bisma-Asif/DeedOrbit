@@ -30,6 +30,10 @@ export type InviteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   roles: RoleSummary[]
+  fixedRole?: {
+    id: RoleSummary["id"]
+    label: string
+  }
   onInvited: () => void
 }
 
@@ -45,6 +49,7 @@ export function InviteDialog({
   open,
   onOpenChange,
   roles,
+  fixedRole,
   onInvited,
 }: InviteDialogProps) {
   const [email, setEmail] = useState("")
@@ -67,10 +72,12 @@ export function InviteDialog({
   // Default to the least-privileged assignable role, so an admin has to opt in
   // to more access rather than out of it.
   useEffect(() => {
-    if (open && !roleId && roles.length > 0) {
+    if (open && fixedRole) {
+      setRoleId(fixedRole.id)
+    } else if (open && !roleId && roles.length > 0) {
       setRoleId(roles[roles.length - 1].id)
     }
-  }, [open, roleId, roles])
+  }, [open, roleId, roles, fixedRole])
 
   useEffect(() => {
     if (!open) {
@@ -97,7 +104,7 @@ export function InviteDialog({
       fullName.trim().length < 2
         ? "Enter the member's name."
         : fieldErrors.fullName,
-    roleId: !roleId ? "Choose a role." : fieldErrors.roleId,
+    roleId: !fixedRole && !roleId ? "Choose a role." : fieldErrors.roleId,
   }
 
   const showError = (key: keyof Errors) =>
@@ -108,18 +115,24 @@ export function InviteDialog({
     setSubmitted(true)
     setFormError(null)
     setFieldErrors({})
-    if (Object.values(errors).some(Boolean) || roles.length === 0) return
+    if (
+      Object.values(errors).some(Boolean) ||
+      (!fixedRole && roles.length === 0)
+    )
+      return
 
     setPending(true)
     try {
       const result = await usersApi.invite({
         email: email.trim().toLowerCase(),
         fullName: fullName.trim(),
-        roleId: roleId as RoleSummary["id"],
+        roleId: fixedRole?.id ?? roleId as RoleSummary["id"],
         ...(jobTitle.trim() ? { jobTitle: jobTitle.trim() } : {}),
       })
       const roleLabel =
-        roles.find((role) => role.id === roleId)?.label ?? "Assigned role"
+        fixedRole?.label ??
+        roles.find((role) => role.id === roleId)?.label ??
+        "Assigned role"
       setIssued({
         email: email.trim().toLowerCase(),
         roleLabel,
@@ -160,8 +173,10 @@ export function InviteDialog({
               <DialogDescription asChild>
                 <div className="text-[12.5px] leading-5">
                   {issued.email} now holds a pending {issued.roleLabel}{" "}
-                  membership in this workspace. They cannot sign in until the
-                  invitation is accepted.
+                  membership in this workspace.{" "}
+                  {fixedRole
+                    ? "They will appear in Sales Agents after accepting the invitation."
+                    : "They cannot sign in until the invitation is accepted."}
                 </div>
               </DialogDescription>
             </DialogHeader>
@@ -288,26 +303,36 @@ export function InviteDialog({
                 />
               </Field>
 
-              <Field
-                label="Role"
-                htmlFor="invite-role"
-                required
-                error={showError("roleId") ? errors.roleId : undefined}
-                hint="You can only assign roles at or below your own level."
-              >
-                <Select value={roleId} onValueChange={setRoleId}>
-                  <SelectTrigger id="invite-role" className="w-full">
-                    <SelectValue placeholder="Choose a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {roles.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
-                        {role.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+              {fixedRole ? (
+                <Field label="Role" htmlFor="invite-fixed-role">
+                  <Input
+                    id="invite-fixed-role"
+                    value={fixedRole.label}
+                    readOnly
+                  />
+                </Field>
+              ) : (
+                <Field
+                  label="Role"
+                  htmlFor="invite-role"
+                  required
+                  error={showError("roleId") ? errors.roleId : undefined}
+                  hint="You can only assign roles at or below your own level."
+                >
+                  <Select value={roleId} onValueChange={setRoleId}>
+                    <SelectTrigger id="invite-role" className="w-full">
+                      <SelectValue placeholder="Choose a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
             </div>
 
             <DialogFooter>
@@ -319,7 +344,10 @@ export function InviteDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={pending || roles.length === 0}>
+              <Button
+                type="submit"
+                disabled={pending || (!fixedRole && roles.length === 0)}
+              >
                 <UserPlus size={13} />{" "}
                 {pending ? "Creating…" : "Create invitation"}
               </Button>

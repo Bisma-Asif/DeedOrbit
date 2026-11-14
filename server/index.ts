@@ -764,7 +764,7 @@ const routes: Route[] = [
   {
     method: "POST",
     pattern: "/api/leads/import",
-    handler: leads.importLeadsPlaceholder,
+    handler: leads.importCampaignLeads,
     public: true,
   },
   {
